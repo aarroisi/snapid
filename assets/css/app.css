@@ -1,0 +1,51 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* This file is for your main application CSS */
+.trix-content {
+    color: #333333;
+}
+
+.trix-content ol {
+    list-style: decimal;
+    margin-left: 0.75rem;
+}
+
+.trix-content ul {
+    list-style: disc;
+    margin-left: 0.75rem;
+}
+
+.trix-content li {
+    margin-top: 0.5rem;
+}
+
+.trix-content a {
+    color: rgb(35, 119, 210);
+    text-decoration: underline;
+}
+
+.trix-content h1 {
+    font-size: 1.25rem !important;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+}
+
+.trix-content img {
+    max-width: 100%;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0.5rem;
+}
+
+.trix-content figcaption {
+    font-size: 0.75rem !important;
+}
+
+@media (min-width: 768px) {
+    .trix-content h1 {
+        font-size: 1.5rem !important;
+    }
+}

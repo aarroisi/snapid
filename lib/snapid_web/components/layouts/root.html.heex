@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" class="[scrollbar-gutter:stable]">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title suffix=" · Phoenix Framework">
+      <%= assigns[:page_title] || "Snapid" %>
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+    </script>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css" />
+    <script type="text/javascript" src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js">
+    </script>
+    <script phx-track-static type="text/javascript" src={~p"/assets/trix_config.js"}>
+    </script>
+  </head>
+  <body class="antialiased bg-primary-50 px-0 pb-10 md:px-[5%] md:pt-8 md:text-lg">
+    <%= @inner_content %>
+    <p class="text-center mt-6 text-xs text-gray-400">
+      SnapId 2024 • by <a class="font-bold" href="https://scalev.id">Scalev</a>
+    </p>
+  </body>
+</html>
