@@ -14,7 +14,6 @@ config :snapid,
 # Configures the endpoint
 config :snapid, SnapidWeb.Endpoint,
   url: [host: "localhost"],
-  adapter: Bandit.PhoenixAdapter,
   render_errors: [
     formats: [html: SnapidWeb.ErrorHTML, json: SnapidWeb.ErrorJSON],
     layout: false
