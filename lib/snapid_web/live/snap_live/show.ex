@@ -14,8 +14,8 @@ defmodule SnapidWeb.SnapLive.Show do
       <hr class="!m-0" />
       <div class="!my-4 trix-content"><%= raw(@snap.body) %></div>
       <hr class="!m-0" />
-      <div class="w-full flex justify-between mt-8">
-        <.back navigate={~p"/snaps"}>Back to snaps</.back>
+      <div class="flex justify-between backdrop-blur md:backdrop-blur-none fixed p-4 md:p-0 md:relative left-0 bottom-0 md:left-auto md:bottom-auto w-full mt-8">
+        <.back class="my-auto" navigate={~p"/snaps"}>Back to snaps</.back>
         <.link navigate={~p"/snaps/#{@snap}/edit"}>
           <.button class="!bg-primary-600">Edit snap</.button>
         </.link>

@@ -35,21 +35,23 @@ function getDefaultHTML() {
       <button type="button" class="trix-button trix-button--icon trix-button--icon-strike" data-trix-attribute="strike" title="${lang.strike}" tabindex="-1">${lang.strike}</button>
       <button type="button" class="trix-button trix-button--icon trix-button--icon-link" data-trix-attribute="href" data-trix-action="link" data-trix-key="k" title="${lang.link}" tabindex="-1">${lang.link}</button>
       <button type="button" class="trix-button trix-button--icon trix-button--icon-heading-1" data-trix-attribute="heading1" title="${lang.heading1}" tabindex="-1">${lang.heading1}</button>
+    </span>
+    <span class="trix-button-group trix-button-group--block-tools" data-trix-button-group="block-tools">
       <button type="button" class="trix-button trix-button--icon trix-button--icon-quote" data-trix-attribute="quote" title="${lang.quote}" tabindex="-1">${lang.quote}</button>
       <button type="button" class="trix-button trix-button--icon trix-button--icon-code" data-trix-attribute="code" title="${lang.code}" tabindex="-1">${lang.code}</button>
       <button type="button" class="trix-button trix-button--icon trix-button--icon-bullet-list" data-trix-attribute="bullet" title="${lang.bullets}" tabindex="-1">${lang.bullets}</button>
       <button type="button" class="trix-button trix-button--icon trix-button--icon-number-list" data-trix-attribute="number" title="${lang.numbers}" tabindex="-1">${lang.numbers}</button>
       <button type="button" class="trix-button trix-button--icon trix-button--icon-decrease-nesting-level" data-trix-action="decreaseNestingLevel" title="${lang.outdent}" tabindex="-1">${lang.outdent}</button>
       <button type="button" class="trix-button trix-button--icon trix-button--icon-increase-nesting-level" data-trix-action="increaseNestingLevel" title="${lang.indent}" tabindex="-1">${lang.indent}</button>
+    </span>
+    <span class="trix-button-group trix-button-group--file-tools" data-trix-button-group="file-tools">
       <button type="button" class="trix-button trix-button--icon trix-button--icon-attach" data-trix-action="attachFiles" title="${lang.attachFiles}" tabindex="-1">${lang.attachFiles}</button>
     </span>
-
     <span class="trix-button-group trix-button-group--history-tools" data-trix-button-group="history-tools">
       <button type="button" class="trix-button trix-button--icon trix-button--icon-undo" data-trix-action="undo" data-trix-key="z" title="${lang.undo}" tabindex="-1">${lang.undo}</button>
       <button type="button" class="trix-button trix-button--icon trix-button--icon-redo" data-trix-action="redo" data-trix-key="shift+z" title="${lang.redo}" tabindex="-1">${lang.redo}</button>
     </span>
   </div>
-
   <div class="trix-dialogs" data-trix-dialogs>
     <div class="trix-dialog trix-dialog--link" data-trix-dialog="href" data-trix-dialog-attribute="href">
       <div class="trix-dialog__link-fields">
@@ -69,7 +71,12 @@ document.addEventListener("trix-before-initialize", () => {
   Trix.config.toolbar.getDefaultHTML = getDefaultHTML;
 });
 
-// document.addEventListener("trix-initialize", function (event) {
-//   const toolbar = event.target.toolbarElement;
-//   toolbar.innerHTML = Trix.config.toolbar.getDefaultHTML();
-// });
+document.addEventListener(
+  "trix-initialize",
+  function () {
+    const toolbars = document.querySelectorAll("trix-toolbar");
+    const html = Trix.config.toolbar.getDefaultHTML();
+    toolbars.forEach((toolbar) => (toolbar.innerHTML = html));
+  },
+  { once: true },
+);

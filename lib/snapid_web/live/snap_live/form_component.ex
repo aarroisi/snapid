@@ -9,7 +9,7 @@ defmodule SnapidWeb.SnapLive.FormComponent do
       <.simple_form
         for={@form}
         id="snap-form"
-        actions_class="backdrop-blur-md md:backdrop-blur-none fixed p-4 md:p-0 md:relative bottom-0 left-0 md:left-auto md:bottom-auto w-full"
+        actions_class="bg-white fixed p-4 md:p-0 md:relative bottom-0 left-0 md:left-auto md:bottom-auto w-full"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
@@ -28,8 +28,10 @@ defmodule SnapidWeb.SnapLive.FormComponent do
           type="text"
           phx-hook="TrixHooks"
         />
-        <div id="trix-editor-wrapper" class="!mt-[12.2px] md:!mt-[15.4px]" phx-update="ignore">
+        <div id="trix-editor-wrapper" class="!mt-[2.2px] md:!mt-[5.4px]" phx-update="ignore">
+          <trix-toolbar id="trix-toolbar-1"></trix-toolbar>
           <trix-editor
+            toolbar="trix-toolbar-1"
             autofocus
             input="content"
             class="!mx-0 !my-2 border-0 !px-0 !py-2 trix-content"
@@ -40,12 +42,7 @@ defmodule SnapidWeb.SnapLive.FormComponent do
 
         <hr class="!m-0" />
         <:actions>
-          <.button
-            class="!bg-secondary-500"
-            type="button"
-            data-confirm="Are you sure you want to cancel? All changes will be lost."
-            phx-click={JS.navigate(@patch)}
-          >
+          <.button class="!bg-secondary-500" type="button" phx-click={JS.navigate(@patch)}>
             Cancel
           </.button>
           <.button class="!bg-primary-600" type="submit" phx-disable-with="Saving...">

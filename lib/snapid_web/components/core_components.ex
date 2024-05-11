@@ -563,7 +563,7 @@ defmodule SnapidWeb.CoreComponents do
       <.back navigate={~p"/posts"}>Back to posts</.back>
   """
   attr :navigate, :any, required: true
-  slot :class, required: false
+  attr :class, :string, required: false
   slot :inner_block, required: true
 
   def back(assigns) do

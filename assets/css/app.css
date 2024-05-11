@@ -44,6 +44,32 @@
     font-size: 0.75rem !important;
 }
 
+trix-toolbar {
+    position: sticky;
+    background-color: white;
+    top: 0;
+    z-index: 1000;
+    padding-top: 10px;
+}
+
+@media (max-width: 639px) {
+    .trix-button-group--history-tools {
+        display: none !important;
+    }
+}
+
+@media (max-width: 767px) {
+    trix-toolbar {
+        position: fixed;
+        width: 100vw;
+        left: 0;
+        top: auto;
+        bottom: 68px !important;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
+
 @media (min-width: 768px) {
     .trix-content h1 {
         font-size: 1.5rem !important;
