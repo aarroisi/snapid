@@ -41,12 +41,14 @@ defmodule SnapidWeb.SnapLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
+    snap = Snaps.get_snap!(id)
+
     {:noreply,
      socket
-     |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:snap, Snaps.get_snap!(id))}
+     |> assign(:page_title, page_title(socket.assigns.live_action, snap.title))
+     |> assign(:snap, snap)}
   end
 
-  defp page_title(:show), do: "Show Snap"
-  defp page_title(:edit), do: "Edit Snap"
+  defp page_title(:show, title), do: title
+  defp page_title(:edit, title), do: "Edit #{title}"
 end
