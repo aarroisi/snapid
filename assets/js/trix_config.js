@@ -47,15 +47,11 @@ function getDefaultHTML() {
     <span class="trix-button-group trix-button-group--file-tools" data-trix-button-group="file-tools">
       <button type="button" class="trix-button trix-button--icon trix-button--icon-attach" data-trix-action="attachFiles" title="${lang.attachFiles}" tabindex="-1">${lang.attachFiles}</button>
     </span>
-    <span class="trix-button-group trix-button-group--history-tools" data-trix-button-group="history-tools">
-      <button type="button" class="trix-button trix-button--icon trix-button--icon-undo" data-trix-action="undo" data-trix-key="z" title="${lang.undo}" tabindex="-1">${lang.undo}</button>
-      <button type="button" class="trix-button trix-button--icon trix-button--icon-redo" data-trix-action="redo" data-trix-key="shift+z" title="${lang.redo}" tabindex="-1">${lang.redo}</button>
-    </span>
   </div>
   <div class="trix-dialogs" data-trix-dialogs>
     <div class="trix-dialog trix-dialog--link" data-trix-dialog="href" data-trix-dialog-attribute="href">
       <div class="trix-dialog__link-fields">
-        <input type="url" name="href" class="trix-input trix-input--dialog" placeholder="${lang.urlPlaceholder}" aria-label="${lang.url}" required data-trix-input>
+        <input type="url" name="href" class="trix-input trix-input--dialog" placeholder="${lang.urlPlaceholder}" aria-label="${lang.url}" data-trix-input>
         <div class="trix-button-group">
           <input type="button" class="trix-button trix-button--dialog" value="${lang.link}" data-trix-method="setAttribute">
           <input type="button" class="trix-button trix-button--dialog" value="${lang.unlink}" data-trix-method="removeAttribute">
@@ -63,7 +59,6 @@ function getDefaultHTML() {
       </div>
     </div>
   </div>
-  <hr />
   `;
 }
 

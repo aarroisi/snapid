@@ -7,14 +7,20 @@ defmodule SnapidWeb.SnapLive.Show do
   def render(assigns) do
     ~H"""
     <%= if @live_action == :show do %>
+      <div class="md:hidden flex justify-between bg-white z-50 -mx-6 sm:-mx-10 -mt-8 sm:-mt-12 mb-6 border-b sticky top-0 p-3 bottom-0 w-screen">
+        <.back class="my-auto text-sm" navigate={~p"/snaps"}>Back to snaps</.back>
+        <.link navigate={~p"/snaps/#{@snap}/edit"}>
+          <.button class="!bg-primary-600 !px-2 !py-1 text-sm">Edit snap</.button>
+        </.link>
+      </div>
       <.header class="mb-6">
         <h1 class="text-2xl md:text-3xl font-bold"><%= @snap.title %></h1>
         <p class="text-sm mt-3"><%= Timex.format!(@snap.inserted_at, "{D} {Mshort} {YYYY}") %></p>
       </.header>
       <hr class="!m-0" />
       <div class="!my-4 trix-content"><%= raw(@snap.body) %></div>
-      <hr class="!m-0" />
-      <div class="flex justify-between backdrop-blur md:backdrop-blur-none fixed p-4 md:p-0 md:relative left-0 bottom-0 md:left-auto md:bottom-auto w-full mt-8">
+      <hr class="hidden md:block !m-0" />
+      <div class="hidden md:flex flex-row justify-between md:p-0 md:relative w-full mt-8">
         <.back class="my-auto" navigate={~p"/snaps"}>Back to snaps</.back>
         <.link navigate={~p"/snaps/#{@snap}/edit"}>
           <.button class="!bg-primary-600">Edit snap</.button>

@@ -9,14 +9,33 @@ defmodule SnapidWeb.SnapLive.FormComponent do
       <.simple_form
         for={@form}
         id="snap-form"
-        actions_class="bg-white fixed p-4 md:p-0 md:relative bottom-0 left-0 md:left-auto md:bottom-auto w-full"
+        top_actions_class="md:hidden flex justify-between bg-white z-50 -mx-6 sm:-mx-10 -mt-8 sm:-mt-12 !mb-6 border-b sticky top-0 !p-3 bottom-0 w-screen"
+        actions_class="hidden md:flex p-0 relative left-auto bottom-auto justify-between"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
       >
+        <:top_actions>
+          <.button
+            class="!bg-secondary-500 text-sm !py-1 !px-2"
+            type="button"
+            phx-click={JS.navigate(@patch)}
+          >
+            Cancel
+          </.button>
+          <.button
+            class="!bg-primary-600 text-sm !py-1 !px-2"
+            type="submit"
+            phx-disable-with="Saving..."
+          >
+            Save Snap
+          </.button>
+        </:top_actions>
+
         <.input
           field={@form[:title]}
           is_show_error={false}
+          wrapper_class="!m-0"
           class="!text-2xl md:!text-3xl font-bold border-none p-0 !m-0 placeholder-[#C0C0C0]"
           type="text"
           placeholder="Enter title here..."
@@ -28,8 +47,14 @@ defmodule SnapidWeb.SnapLive.FormComponent do
           type="text"
           phx-hook="TrixHooks"
         />
+        <div
+          id="trix-toolbar-wrapper"
+          class="w-full !m-0 !mt-4 border-y sticky top-[56px] md:top-0 bg-white z-50"
+          phx-update="ignore"
+        >
+          <trix-toolbar id="trix-toolbar-1" class="mt-[10px]"></trix-toolbar>
+        </div>
         <div id="trix-editor-wrapper" class="!mt-[2.2px] md:!mt-[5.4px]" phx-update="ignore">
-          <trix-toolbar id="trix-toolbar-1"></trix-toolbar>
           <trix-editor
             toolbar="trix-toolbar-1"
             autofocus
