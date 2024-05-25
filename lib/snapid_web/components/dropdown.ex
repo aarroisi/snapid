@@ -13,14 +13,14 @@ defmodule SnapidWeb.Components.Dropdown do
         <button
           x-on:click="options_open = !options_open"
           type="button"
-          class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          class="inline-flex w-full justify-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold text-brand-900 dark:text-brand-100 shadow-sm ring-1 ring-inset ring-brand-300 hover:bg-brand-50 dark:hover:bg-brand-950"
           id="menu-button"
           aria-expanded="true"
           aria-haspopup="true"
         >
           <%= render_slot(@title_icon) %>
           <svg
-            class="-mr-1 h-5 w-5 text-gray-400"
+            class="-mr-1 h-5 w-5 text-black dark:text-white"
             viewBox="0 0 20 20"
             fill="currentColor"
             aria-hidden="true"
@@ -47,7 +47,7 @@ defmodule SnapidWeb.Components.Dropdown do
         x-show="options_open"
         x-transition
         x-on:click.away="options_open = false"
-        class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+        class="bg-white dark:bg-brand-800 absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
         role="menu"
         aria-orientation="vertical"
         aria-labelledby="menu-button"
@@ -59,7 +59,7 @@ defmodule SnapidWeb.Components.Dropdown do
             navigate={item.href}
             phx-click={item.phx_click}
             data-confirm={item.data_confirm}
-            class={"text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 #{item.class}"}
+            class={"text-brand-700 dark:text-brand-300 block px-4 py-2 text-sm hover:bg-brand-100 dark:hover:bg-brand-900 #{item.class}"}
             role="menuitem"
             tabindex="-1"
             id={"menu-item-#{index}"}

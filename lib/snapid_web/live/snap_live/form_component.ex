@@ -9,7 +9,7 @@ defmodule SnapidWeb.SnapLive.FormComponent do
       <.simple_form
         for={@form}
         id="snap-form"
-        top_actions_class="md:hidden flex justify-between bg-white z-50 -mx-6 sm:-mx-10 -mt-8 sm:-mt-12 !mb-6 border-b sticky top-0 !p-3 bottom-0 w-screen"
+        top_actions_class="md:hidden flex justify-between z-50 -mx-6 sm:-mx-10 -mt-8 sm:-mt-12 !mb-6 border-b border-brand-600 dark:border-brand-400 sticky top-0 !p-3 bottom-0 w-screen"
         actions_class="hidden md:flex p-0 relative left-auto bottom-auto justify-between"
         phx-target={@myself}
         phx-change="validate"
@@ -36,7 +36,7 @@ defmodule SnapidWeb.SnapLive.FormComponent do
           field={@form[:title]}
           is_show_error={false}
           wrapper_class="!m-0"
-          class="!text-2xl md:!text-3xl font-bold border-none p-0 !m-0 placeholder-[#C0C0C0]"
+          class="!bg-transparent !text-2xl md:!text-3xl font-bold border-none p-0 !m-0 placeholder-[#C0C0C0]"
           type="text"
           placeholder="Enter title here..."
         />
@@ -49,7 +49,7 @@ defmodule SnapidWeb.SnapLive.FormComponent do
         />
         <div
           id="trix-toolbar-wrapper"
-          class="w-full !m-0 !mt-4 border-y sticky top-[56px] md:top-0 bg-white z-50"
+          class="w-full !m-0 !mt-4 border-y border-brand-600 dark:border-brand-400 sticky top-[56px] md:top-0 z-50"
           phx-update="ignore"
         >
           <trix-toolbar id="trix-toolbar-1" class="mt-[10px]"></trix-toolbar>
@@ -65,7 +65,7 @@ defmodule SnapidWeb.SnapLive.FormComponent do
           </trix-editor>
         </div>
 
-        <hr class="!m-0" />
+        <hr class="!m-0 border-brand-600 dark:border-brand-400" />
         <:actions>
           <.button
             class="!bg-secondary-500 hover:!bg-secondary-600"

@@ -3,8 +3,18 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+.trix-button-group {
+    background-color: white;
+}
+
 .trix-content {
     color: #333333;
+}
+
+@media (prefers-color-scheme: dark) {
+    .trix-content {
+        color: white;
+    }
 }
 
 .trix-content ol {
