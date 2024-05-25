@@ -5,11 +5,28 @@ defmodule SnapidWeb.SnapLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
+    <div class="z-10 flex flex-row items-center space-x-6 justify-between md:justify-end bg-white z-50 -mx-6 sm:-mx-10 -mt-8 md:mx-auto sm:-mt-12 mb-6 border-b md:border-0 p-3 md:px-0 w-screen md:w-full">
+      <%= if @current_user do %>
+        <div class="text-[0.8125rem] leading-6 text-zinc-900">
+          <%= @current_user.email %>
+        </div>
+        <div>
+          <.link
+            href={~p"/users/log_out"}
+            method="delete"
+            class="text-[0.8125rem] text-zinc-900 font-semibold hover:text-zinc-700"
+          >
+            Log out
+          </.link>
+        </div>
+      <% end %>
+    </div>
+
     <.header>
       Snaps
       <:actions>
         <.link patch={~p"/snaps/new"}>
-          <.button class="!bg-primary-600">New Snap</.button>
+          <.button class="!bg-primary-600 hover:!bg-primary-700">New Snap</.button>
         </.link>
       </:actions>
     </.header>

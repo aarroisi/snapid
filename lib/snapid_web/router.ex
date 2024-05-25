@@ -1,6 +1,8 @@
 defmodule SnapidWeb.Router do
   use SnapidWeb, :router
 
+  import SnapidWeb.UserAuth
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -8,25 +10,11 @@ defmodule SnapidWeb.Router do
     plug :put_root_layout, html: {SnapidWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :fetch_current_user
   end
 
   pipeline :api do
     plug :accepts, ["json"]
-  end
-
-  scope "/", SnapidWeb do
-    pipe_through :browser
-
-    get "/", ThreadController, :home
-    get "/threads", ThreadController, :home
-
-    post "/trix-uploads", TrixUploadsController, :create
-    delete "/trix-uploads", TrixUploadsController, :delete
-
-    live "/snaps", SnapLive.Index, :index
-    live "/snaps/new", SnapLive.New, :new
-    live "/snaps/:id/edit", SnapLive.Show, :edit
-    live "/snaps/:id", SnapLive.Show, :show
   end
 
   # Other scopes may use custom stacks.
@@ -48,6 +36,55 @@ defmodule SnapidWeb.Router do
 
       live_dashboard "/dashboard", metrics: SnapidWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
+    end
+  end
+
+  ## Authentication routes
+
+  scope "/", SnapidWeb do
+    pipe_through [:browser, :redirect_if_user_is_authenticated]
+
+    live_session :redirect_if_user_is_authenticated,
+      on_mount: [{SnapidWeb.UserAuth, :redirect_if_user_is_authenticated}] do
+      live "/users/register", UserRegistrationLive, :new
+      live "/users/log_in", UserLoginLive, :new
+      live "/users/reset_password", UserForgotPasswordLive, :new
+      live "/users/reset_password/:token", UserResetPasswordLive, :edit
+    end
+
+    post "/users/log_in", UserSessionController, :create
+  end
+
+  scope "/", SnapidWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    get "/", ThreadController, :home
+    get "/threads", ThreadController, :home
+
+    post "/trix-uploads", TrixUploadsController, :create
+    delete "/trix-uploads", TrixUploadsController, :delete
+
+    live_session :require_authenticated_user,
+      on_mount: [{SnapidWeb.UserAuth, :ensure_authenticated}] do
+      live "/snaps", SnapLive.Index, :index
+      live "/snaps/new", SnapLive.New, :new
+      live "/snaps/:id/edit", SnapLive.Show, :edit
+      live "/snaps/:id", SnapLive.Show, :show
+
+      live "/users/settings", UserSettingsLive, :edit
+      live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+    end
+  end
+
+  scope "/", SnapidWeb do
+    pipe_through [:browser]
+
+    delete "/users/log_out", UserSessionController, :delete
+
+    live_session :current_user,
+      on_mount: [{SnapidWeb.UserAuth, :mount_current_user}] do
+      live "/users/confirm/:token", UserConfirmationLive, :edit
+      live "/users/confirm", UserConfirmationInstructionsLive, :new
     end
   end
 end

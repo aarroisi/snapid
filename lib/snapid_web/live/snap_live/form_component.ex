@@ -17,14 +17,14 @@ defmodule SnapidWeb.SnapLive.FormComponent do
       >
         <:top_actions>
           <.button
-            class="!bg-secondary-500 text-sm !py-1 !px-2"
+            class="!bg-secondary-500 hover:!bg-secondary-600 text-sm !py-1 !px-2"
             type="button"
             phx-click={JS.navigate(@patch)}
           >
             Cancel
           </.button>
           <.button
-            class="!bg-primary-600 text-sm !py-1 !px-2"
+            class="!bg-primary-600 hover:!bg-primary-700 text-sm !py-1 !px-2"
             type="submit"
             phx-disable-with="Saving..."
           >
@@ -67,10 +67,18 @@ defmodule SnapidWeb.SnapLive.FormComponent do
 
         <hr class="!m-0" />
         <:actions>
-          <.button class="!bg-secondary-500" type="button" phx-click={JS.navigate(@patch)}>
+          <.button
+            class="!bg-secondary-500 hover:!bg-secondary-600"
+            type="button"
+            phx-click={JS.navigate(@patch)}
+          >
             Cancel
           </.button>
-          <.button class="!bg-primary-600" type="submit" phx-disable-with="Saving...">
+          <.button
+            class="!bg-primary-600 hover:!bg-primary-700"
+            type="submit"
+            phx-disable-with="Saving..."
+          >
             Save Snap
           </.button>
         </:actions>
