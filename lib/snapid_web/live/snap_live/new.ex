@@ -7,6 +7,7 @@ defmodule SnapidWeb.SnapLive.New do
     ~H"""
     <.live_component
       module={SnapidWeb.SnapLive.FormComponent}
+      current_user={@current_user}
       id={:new}
       title={@page_title}
       snap={@snap}

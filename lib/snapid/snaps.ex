@@ -40,7 +40,47 @@ defmodule Snapid.Snaps do
       ** (Ecto.NoResultsError)
 
   """
-  def get_snap!(id), do: Repo.get!(Snap, id)
+  def get_snap!(id) do
+    Repo.get!(Snap, id)
+    |> load_user()
+  end
+
+  defp load_user(%Snap{} = snap) do
+    user =
+      case snap.user_id do
+        nil ->
+          %{}
+
+        _ ->
+          %{"data" => user} =
+            snap.user_id
+            |> Snapid.Auth.get_user_by_id()
+
+          user
+      end
+
+    snap
+    |> Map.put(:user, user)
+  end
+
+  @doc """
+  Gets a single snap.
+
+  Raises `Ecto.NoResultsError` if the Snap does not exist.
+
+  ## Examples
+
+      iex> get_snap!(123)
+      %Snap{}
+
+      iex> get_snap!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_snap_by_slug!(slug) do
+    Repo.get_by!(Snap, slug: slug, is_published: true)
+    |> load_user()
+  end
 
   @doc """
   Creates a snap.

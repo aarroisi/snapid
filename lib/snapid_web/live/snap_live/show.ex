@@ -15,13 +15,30 @@ defmodule SnapidWeb.SnapLive.Show do
           </.button>
         </.link>
       </div>
+    <% end %>
+    <%= if @live_action in [:show, :show_public] do %>
       <.header class="mb-6">
         <h1 class="text-2xl md:text-3xl font-bold"><%= @snap.title %></h1>
-        <p class="text-sm mt-3"><%= Timex.format!(@snap.inserted_at, "{D} {Mshort} {YYYY}") %></p>
+        <p class="text-sm mt-3">
+          <%= if @snap.user["email"] do %>
+            <%= @snap.user["email"] %> ·
+          <% end %>
+          <%= Timex.format!(@snap.inserted_at, "{D} {Mshort} {YYYY}") %>
+        </p>
+        <.link
+          :if={@live_action == :show and not is_nil(@snap.slug)}
+          target="_blank"
+          navigate={~p"/public/#{@snap.slug}"}
+          class="text-sm mt-3 underline"
+        >
+          /<%= @snap.slug %>
+        </.link>
       </.header>
       <hr class="!m-0" />
       <div class="!my-4 trix-content"><%= raw(@snap.body) %></div>
       <hr class="hidden md:block !m-0" />
+    <% end %>
+    <%= if @live_action == :show do %>
       <div class="hidden md:flex flex-row justify-between md:p-0 md:relative w-full mt-8">
         <.back class="my-auto" navigate={~p"/snaps"}>Back to snaps</.back>
         <.link navigate={~p"/snaps/#{@snap}/edit"}>
@@ -33,6 +50,7 @@ defmodule SnapidWeb.SnapLive.Show do
     <.live_component
       :if={@live_action == :edit}
       module={SnapidWeb.SnapLive.FormComponent}
+      current_user={@current_user}
       id={@snap.id}
       title={@page_title}
       action={@live_action}
@@ -57,6 +75,16 @@ defmodule SnapidWeb.SnapLive.Show do
      |> assign(:snap, snap)}
   end
 
+  def handle_params(%{"slug" => slug}, _, socket) do
+    snap = Snaps.get_snap_by_slug!(slug)
+
+    {:noreply,
+     socket
+     |> assign(:page_title, page_title(socket.assigns.live_action, snap.title))
+     |> assign(:snap, snap)}
+  end
+
+  defp page_title(:show_public, title), do: title
   defp page_title(:show, title), do: title
   defp page_title(:edit, title), do: "Edit #{title}"
 end

@@ -15,7 +15,7 @@ defmodule SnapidWeb.UserLoginLive do
         <:actions>
           <.button
             phx-disable-with="Logging in..."
-            class="w-full h-10 bg-primary-600 hover:!bg-primary-700"
+            class="w-full h-10 !bg-primary-600 hover:!bg-primary-700"
           >
             Log in
           </.button>

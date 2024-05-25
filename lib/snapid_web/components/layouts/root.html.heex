@@ -4,6 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
+    <meta property="og:url" content={assigns[:og_url] || nil} />
+    <meta property="og:type" content={assigns[:og_type] || nil} />
+    <meta property="og:title" content={assigns[:page_title] || nil} />
+    <meta property="og:description" content={assigns[:og_description] || nil} />
     <.live_title suffix=" · SnapId">
       <%= assigns[:page_title] || "Snapid" %>
     </.live_title>

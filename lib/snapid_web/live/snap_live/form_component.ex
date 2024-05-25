@@ -112,6 +112,10 @@ defmodule SnapidWeb.SnapLive.FormComponent do
   end
 
   defp save_snap(socket, :edit, snap_params) do
+    snap_params =
+      snap_params
+      |> Map.put("user_id", socket.assigns.current_user.id)
+
     case Snaps.update_snap(socket.assigns.snap, snap_params) do
       {:ok, snap} ->
         notify_parent({:saved, snap})
@@ -126,6 +130,10 @@ defmodule SnapidWeb.SnapLive.FormComponent do
   end
 
   defp save_snap(socket, :new, snap_params) do
+    snap_params =
+      snap_params
+      |> Map.put("user_id", socket.assigns.current_user.id)
+
     case Snaps.create_snap(snap_params) do
       {:ok, snap} ->
         notify_parent({:saved, snap})
