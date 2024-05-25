@@ -1,6 +1,7 @@
 defmodule SnapidWeb.SnapLive.Index do
   use SnapidWeb, :live_view
   alias Snapid.Snaps
+  import SnapidWeb.Components.Dropdown
 
   @impl true
   def render(assigns) do
@@ -33,23 +34,16 @@ defmodule SnapidWeb.SnapLive.Index do
 
     <.table
       id="snaps"
+      show_actions_on_mobile={true}
       rows={@streams.snaps}
       row_click={fn {_id, snap} -> JS.navigate(~p"/snaps/#{snap}") end}
     >
       <:col :let={{_id, snap}} label="Title"><%= snap.title %></:col>
       <:col :let={{_id, snap}} label="Created"><%= snap.inserted_at |> Timex.from_now() %></:col>
-      <:action :let={{_id, snap}}>
-        <.link navigate={~p"/snaps/#{snap}/edit"}>
-          <.icon name="hero-pencil-square" class="w-5 h-5" />
-        </.link>
-      </:action>
       <:action :let={{id, snap}}>
-        <.link
-          phx-click={JS.push("delete", value: %{id: snap.id}) |> hide("##{id}")}
-          data-confirm="Are you sure?"
-        >
-          <.icon name="hero-trash" class="text-red-600 w-5 h-5" />
-        </.link>
+        <.dropdown title="Actions" items={get_actions(id, snap)}>
+          <:title_icon><.icon name="hero-pencil-square" class="w-5 h-5" /></:title_icon>
+        </.dropdown>
       </:action>
     </.table>
     """
@@ -57,7 +51,30 @@ defmodule SnapidWeb.SnapLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :snaps, Snaps.list_snaps())}
+    socket =
+      socket
+      |> stream(:snaps, Snaps.list_snaps())
+
+    {:ok, socket}
+  end
+
+  defp get_actions(id, snap) do
+    [
+      %{
+        href: ~p"/snaps/#{snap}/edit",
+        title: "Edit",
+        phx_click: nil,
+        data_confirm: nil,
+        class: nil
+      },
+      %{
+        href: nil,
+        title: "Delete",
+        phx_click: JS.push("delete", value: %{id: snap.id}) |> hide("##{id}"),
+        data_confirm: "Are you sure?",
+        class: "!text-red-600"
+      }
+    ]
   end
 
   @impl true

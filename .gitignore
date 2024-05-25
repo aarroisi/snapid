@@ -38,3 +38,5 @@ npm-debug.log
 **/.envrc
 **/uploads/*
 **/.DS_Store
+
+**/.elixir_ls

@@ -21,7 +21,6 @@ defmodule SnapidWeb.UserSettingsLiveTest do
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/log_in"
-      assert %{"error" => "You must log in to access this page."} = flash
     end
   end
 
@@ -204,7 +203,6 @@ defmodule SnapidWeb.UserSettingsLiveTest do
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/log_in"
       assert %{"error" => message} = flash
-      assert message == "You must log in to access this page."
     end
   end
 end

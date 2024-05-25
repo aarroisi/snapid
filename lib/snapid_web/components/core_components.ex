@@ -471,6 +471,8 @@ defmodule SnapidWeb.CoreComponents do
     default: &Function.identity/1,
     doc: "the function for mapping each row before calling the :col and :action slots"
 
+  attr :show_actions_on_mobile, :boolean, default: false
+
   slot :col, required: true do
     attr :label, :string
   end
@@ -517,7 +519,10 @@ defmodule SnapidWeb.CoreComponents do
                 </span>
               </div>
             </td>
-            <td :if={@action != []} class="hidden sm:block relative w-full p-0">
+            <td
+              :if={@action != []}
+              class={"#{if not @show_actions_on_mobile, do: "hidden w-full"} sm:block relative p-0"}
+            >
               <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
                 <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
                 <span

@@ -20,7 +20,7 @@ defmodule SnapidWeb.UserSessionController do
 
   def create(conn, params) do
     params = Map.put(params, "remember_me", "true")
-    create(conn, params, "Welcome back!")
+    create(conn, params, nil)
   end
 
   defp create(conn, %{"user" => user_params}, info) do
@@ -29,7 +29,7 @@ defmodule SnapidWeb.UserSessionController do
     case Accounts.get_user_by_email_and_password(email, password) do
       %User{} = user ->
         conn
-        |> put_flash(:info, info)
+        |> maybe_add_flash(info)
         |> UserAuth.log_in_user(user, user_params)
 
       nil ->
@@ -40,9 +40,17 @@ defmodule SnapidWeb.UserSessionController do
     end
   end
 
+  defp maybe_add_flash(conn, flash) do
+    if not is_nil(flash) do
+      conn
+      |> put_flash(:info, flash)
+    else
+      conn
+    end
+  end
+
   def delete(conn, _params) do
     conn
-    |> put_flash(:info, "Logged out successfully.")
     |> UserAuth.log_out_user()
   end
 end
