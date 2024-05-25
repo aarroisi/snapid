@@ -6,7 +6,7 @@ defmodule SnapidWeb.SnapLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="z-10 flex flex-row items-center space-x-6 justify-between md:justify-end z-50 -mx-6 sm:-mx-10 -mt-8 md:mx-auto sm:-mt-12 mb-6 border-b border-brand-600 dark:border-brand-400 md:border-0 p-3 md:px-0 w-screen md:w-full">
+    <div class="z-10 flex flex-row items-center space-x-6 justify-between md:justify-end z-50 -mx-6 sm:-mx-10 -mt-8 md:mx-auto sm:-mt-12 mb-6 border-b border-brand-600 dark:border-brand-400 md:border-0 py-4 px-6 md:px-0 w-screen md:w-full">
       <%= if @current_user do %>
         <div class="text-[0.8125rem] leading-6 text-brand-900 dark:text-brand-100">
           <%= @current_user.email %>

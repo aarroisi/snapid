@@ -447,7 +447,7 @@ defmodule SnapidWeb.CoreComponents do
     ~H"""
     <header class={[@actions != [] && "flex items-center justify-between gap-4", @class]}>
       <div>
-        <h1 class="text-lg font-semibold leading-8 text-brand-800 dark:text-brand-200">
+        <h1 class="text-lg font-semibold leading-8 text-brand-900 dark:text-brand-100">
           <%= render_slot(@inner_block) %>
         </h1>
         <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-brand-600 dark:text-brand-400">
@@ -493,13 +493,13 @@ defmodule SnapidWeb.CoreComponents do
       end
 
     ~H"""
-    <div>
+    <div class="w-screen md:w-full -mx-6 sm:-mx-10 md:mx-0">
       <table class="mt-11 w-full">
         <thead class="text-sm text-left leading-6 text-brand-700 dark:text-brand-300">
           <tr>
             <th
               :for={{col, i} <- Enum.with_index(@col)}
-              class={"p-0 pb-4 font-normal sm:pr-6 sm:text-left #{if i == 0, do: "pr-6 text-left", else: "pl-6 text-right"}"}
+              class={"p-0 pb-4 font-normal sm:pr-6 sm:text-left #{if i == 0, do: "pr-6 text-left pl-6 sm:pl-10", else: "pl-6 text-right"}"}
             >
               <%= col[:label] %>
             </th>
@@ -511,20 +511,24 @@ defmodule SnapidWeb.CoreComponents do
         <tbody
           id={@id}
           phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-          class="relative divide-y divide-brand-600 dark:divide-brand-400 border-t border-brand-600 dark:border-brand-400 text-sm leading-6 text-brand-700 dark:text-brand-300"
+          class="relative divide-y divide-brand-600 dark:divide-brand-400 border-y border-brand-600 dark:border-brand-400 text-sm leading-6 text-brand-700 dark:text-brand-300"
         >
           <tr
             :for={row <- @rows}
             id={@row_id && @row_id.(row)}
-            class="group hover:bg-brand-50 dark:hover:bg-brand-900"
+            class="group hover:bg-brand-100 dark:hover:bg-brand-700"
           >
             <td
               :for={{col, i} <- Enum.with_index(@col)}
               phx-click={@row_click && @row_click.(row)}
-              class={["relative p-0", @row_click && "hover:cursor-pointer"]}
+              class={[
+                "relative p-0",
+                @row_click && "hover:cursor-pointer",
+                i == 0 && "pl-6 sm:pl-10"
+              ]}
             >
               <div class={"block py-4 sm:pr-6 sm:text-left #{if i == 0, do: "pr-6 text-left", else: "pl-6 text-right"}"}>
-                <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-brand-50 dark:group-hover:bg-brand-900 sm:rounded-l-xl" />
+                <span class="absolute right-0 left-4 sm:rounded-l-xl" />
                 <span class={[
                   "relative",
                   i == 0 && "font-semibold text-brand-900 dark:text-brand-100"
@@ -535,13 +539,13 @@ defmodule SnapidWeb.CoreComponents do
             </td>
             <td
               :if={@action != []}
-              class={"#{if not @show_actions_on_mobile, do: "hidden w-full"} sm:block relative p-0"}
+              class={"#{if not @show_actions_on_mobile, do: "hidden w-full"} sm:block relative p-0 pr-6 sm:pr-10 md:pr-0"}
             >
               <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
-                <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-brand-50 dark:group-hover:bg-brand-900 sm:rounded-r-xl" />
+                <span class="absolute right-4 left-0 sm:rounded-r-xl" />
                 <span
                   :for={action <- @action}
-                  class="relative ml-4 font-semibold leading-6 text-brand-900 dark:text-brand-100 hover:text-brand-700 dark:hover:text-brand-300"
+                  class="relative ml-4 font-semibold leading-6 text-brand-900 dark:text-brand-100"
                 >
                   <%= render_slot(action, @row_item.(row)) %>
                 </span>

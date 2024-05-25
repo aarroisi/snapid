@@ -7,7 +7,7 @@ defmodule SnapidWeb.SnapLive.Show do
   def render(assigns) do
     ~H"""
     <%= if @live_action == :show do %>
-      <div class="md:hidden flex justify-between z-50 -mx-6 sm:-mx-10 -mt-8 sm:-mt-12 mb-6 border-b border-brand-600 dark:border-brand-400 sticky top-0 p-3 bottom-0 w-screen bg-white dark:bg-brand-500">
+      <div class="md:hidden flex justify-between z-50 -mx-6 sm:-mx-10 -mt-8 sm:-mt-12 mb-6 border-b border-brand-600 dark:border-brand-400 sticky top-0 p-3 pl bottom-0 w-screen bg-white dark:bg-brand-500">
         <.back class="my-auto text-sm" navigate={~p"/snaps"}>Back to snaps</.back>
         <.link navigate={~p"/snaps/#{@snap}/edit"}>
           <.button class="!bg-primary-600 hover:!bg-primary-700 !px-2 !py-1 text-sm">
