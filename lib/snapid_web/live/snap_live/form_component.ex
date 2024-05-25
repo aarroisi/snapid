@@ -9,7 +9,7 @@ defmodule SnapidWeb.SnapLive.FormComponent do
       <.simple_form
         for={@form}
         id="snap-form"
-        top_actions_class="md:hidden flex justify-between z-50 -mx-6 sm:-mx-10 -mt-8 sm:-mt-12 !mb-6 border-b border-brand-600 dark:border-brand-400 sticky top-0 !p-3 bottom-0 w-screen"
+        top_actions_class="md:hidden flex justify-between z-50 -mx-6 sm:-mx-10 -mt-8 sm:-mt-12 !mb-6 border-b border-brand-600 dark:border-brand-400 sticky top-0 !p-3 bottom-0 w-screen bg-white dark:bg-brand-500"
         actions_class="hidden md:flex p-0 relative left-auto bottom-auto justify-between"
         phx-target={@myself}
         phx-change="validate"
@@ -49,7 +49,7 @@ defmodule SnapidWeb.SnapLive.FormComponent do
         />
         <div
           id="trix-toolbar-wrapper"
-          class="w-full !m-0 !mt-4 border-y border-brand-600 dark:border-brand-400 sticky top-[56px] md:top-0 z-50"
+          class="w-full !m-0 !mt-4 border-y border-brand-600 dark:border-brand-400 sticky top-[56px] md:top-0 z-50 bg-white dark:bg-brand-500"
           phx-update="ignore"
         >
           <trix-toolbar id="trix-toolbar-1" class="mt-[10px]"></trix-toolbar>
