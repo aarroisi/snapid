@@ -3,7 +3,7 @@ defmodule Snapid.Snaps do
   The Snaps context.
   """
 
-  import Ecto.Query, warn: false
+  import Ecto.Query
   alias Snapid.Repo
 
   alias Snapid.Snaps.Snap
@@ -17,13 +17,25 @@ defmodule Snapid.Snaps do
       [%Snap{}, ...]
 
   """
-  def list_snaps do
+  def list_snaps(opts \\ []) do
+    user_id = Keyword.get(opts, :user_id)
+
     from(
       s in Snap,
       order_by: [desc: s.inserted_at],
       limit: 25
     )
+    |> maybe_filter_by(:user_id, user_id)
     |> Repo.all()
+  end
+
+  defp maybe_filter_by(query, key, value) do
+    if not is_nil(value) do
+      query
+      |> where([s], field(s, ^key) == ^value)
+    else
+      query
+    end
   end
 
   @doc """
@@ -40,27 +52,16 @@ defmodule Snapid.Snaps do
       ** (Ecto.NoResultsError)
 
   """
-  def get_snap!(id) do
-    Repo.get!(Snap, id)
+  def get_snap!(id, opts \\ []) do
+    user_id = Keyword.get(opts, :user_id)
+
+    from(
+      s in Snap,
+      where: s.id == ^id
+    )
+    |> maybe_filter_by(:user_id, user_id)
+    |> Repo.one()
     |> load_user()
-  end
-
-  defp load_user(%Snap{} = snap) do
-    user =
-      case snap.user_id do
-        nil ->
-          %{}
-
-        _ ->
-          %{"data" => user} =
-            snap.user_id
-            |> Snapid.Auth.get_user_by_id()
-
-          user
-      end
-
-    snap
-    |> Map.put(:user, user)
   end
 
   @doc """
@@ -146,4 +147,24 @@ defmodule Snapid.Snaps do
   def change_snap(%Snap{} = snap, attrs \\ %{}) do
     Snap.changeset(snap, attrs)
   end
+
+  defp load_user(%Snap{} = snap) do
+    user =
+      case snap.user_id do
+        nil ->
+          %{}
+
+        _ ->
+          %{"data" => user} =
+            snap.user_id
+            |> Snapid.Auth.get_user_by_id()
+
+          user
+      end
+
+    snap
+    |> Map.put(:user, user)
+  end
+
+  defp load_user(nil), do: nil
 end

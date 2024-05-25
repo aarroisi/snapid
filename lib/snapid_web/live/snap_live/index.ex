@@ -51,9 +51,11 @@ defmodule SnapidWeb.SnapLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    current_user_id = socket.assigns.current_user.id
+
     socket =
       socket
-      |> stream(:snaps, Snaps.list_snaps())
+      |> stream(:snaps, Snaps.list_snaps(user_id: current_user_id))
 
     {:ok, socket}
   end
