@@ -52,7 +52,8 @@ defmodule SnapidWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {SnapidWeb.Layouts, :app}
+        layout: {SnapidWeb.Layouts, :app},
+        global_prefixes: ~w(x-)
 
       unquote(html_helpers())
     end
@@ -68,7 +69,7 @@ defmodule SnapidWeb do
 
   def html do
     quote do
-      use Phoenix.Component
+      use Phoenix.Component, global_prefixes: ~w(x-)
 
       # Import convenience functions from controllers
       import Phoenix.Controller,

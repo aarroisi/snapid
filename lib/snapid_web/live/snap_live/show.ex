@@ -7,7 +7,7 @@ defmodule SnapidWeb.SnapLive.Show do
   def render(assigns) do
     ~H"""
     <%= if @live_action == :show do %>
-      <div class="md:hidden flex justify-between z-50 -mx-6 sm:-mx-10 -mt-8 sm:-mt-12 mb-6 border-b border-brand-600 dark:border-brand-400 sticky top-0 p-3 pl bottom-0 w-screen bg-white dark:bg-brand-500">
+      <div class="md:hidden flex justify-between z-50 -mx-6 sm:-mx-10 -mt-8 sm:-mt-12 mb-6 border-b border-brand-200 dark:border-brand-400 sticky top-0 p-3 pl bottom-0 w-screen bg-white dark:bg-brand-500">
         <.back class="my-auto text-sm" navigate={~p"/snaps"}>Back to snaps</.back>
         <.link navigate={~p"/snaps/#{@snap}/edit"}>
           <.button class="!bg-primary-600 hover:!bg-primary-700 !px-2 !py-1 text-sm">
@@ -34,11 +34,11 @@ defmodule SnapidWeb.SnapLive.Show do
           /<%= @snap.slug %>
         </.link>
       </.header>
-      <hr class="!m-0 border-brand-600 dark:border-brand-400" />
+      <hr class="!m-0 border-brand-200 dark:border-brand-400" />
       <div class="!my-4 trix-content"><%= raw(@snap.body) %></div>
     <% end %>
     <%= if @live_action == :show do %>
-      <hr class="hidden md:block !m-0 border-brand-600 dark:border-brand-400" />
+      <hr class="hidden md:block !m-0 border-brand-200 dark:border-brand-400" />
       <div class="hidden md:flex flex-row justify-between md:p-0 md:relative w-full mt-8">
         <.back class="my-auto" navigate={~p"/snaps"}>Back to snaps</.back>
         <.link navigate={~p"/snaps/#{@snap}/edit"}>
@@ -72,6 +72,7 @@ defmodule SnapidWeb.SnapLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, snap.title))
+     |> assign(:og_description, snap.description)
      |> assign(:snap, snap)}
   end
 

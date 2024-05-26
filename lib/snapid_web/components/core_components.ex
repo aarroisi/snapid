@@ -14,7 +14,7 @@ defmodule SnapidWeb.CoreComponents do
 
   Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
   """
-  use Phoenix.Component
+  use Phoenix.Component, global_prefixes: ~w(x-)
 
   alias Phoenix.LiveView.JS
   import SnapidWeb.Gettext
@@ -38,6 +38,7 @@ defmodule SnapidWeb.CoreComponents do
   """
   attr :id, :string, required: true
   attr :show, :boolean, default: false
+  attr :focus_wrap_class, :string, default: ""
   attr :on_cancel, JS, default: %JS{}
   slot :inner_block, required: true
 
@@ -48,6 +49,7 @@ defmodule SnapidWeb.CoreComponents do
       phx-mounted={@show && show_modal(@id)}
       phx-remove={hide_modal(@id)}
       data-cancel={JS.exec(@on_cancel, "phx-remove")}
+      data-open={show_modal(@id)}
       class="relative z-50 hidden"
     >
       <div
@@ -70,7 +72,7 @@ defmodule SnapidWeb.CoreComponents do
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class="shadow-brand-700/10 ring-brand-700/10 relative hidden rounded-2xl p-14 shadow-lg ring-1 transition"
+              class={"shadow-brand-700/10 ring-brand-700/10 relative hidden rounded-2xl p-14 shadow-lg ring-1 transition bg-white dark:bg-brand-500 #{@focus_wrap_class}"}
             >
               <div class="absolute top-6 right-5">
                 <button
@@ -347,7 +349,7 @@ defmodule SnapidWeb.CoreComponents do
         id={@id}
         name={@name}
         class={[
-          "mt-2 block w-full rounded-md border border-brand-300 dark:border-brand-700 shadow-sm focus:border-brand-400 focus:ring-0 sm:text-sm",
+          "block w-full rounded-md border border-brand-300 dark:border-brand-700 shadow-sm focus:border-brand-400 focus:ring-0 sm:text-sm",
           @class
         ]}
         multiple={@multiple}
@@ -369,7 +371,7 @@ defmodule SnapidWeb.CoreComponents do
         id={@id}
         name={@name}
         class={[
-          "mt-2 block w-full rounded-lg text-brand-900 dark:text-brand-100 focus:ring-0 sm:text-sm sm:leading-6",
+          "block w-full rounded-lg text-brand-900 dark:text-brand-100 focus:ring-0 sm:text-sm sm:leading-6",
           "min-h-[6rem] phx-no-feedback:border-brand-300 phx-no-feedback:focus:border-brand-400",
           @errors == [] && "border-brand-300 dark:border-brand-700 focus:border-brand-400",
           @errors != [] && "border-rose-400 dark:border-rose-600 focus:border-rose-400",
@@ -393,7 +395,7 @@ defmodule SnapidWeb.CoreComponents do
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "mt-2 block w-full rounded-lg text-brand-900 dark:text-brand-100 focus:ring-0 sm:text-sm sm:leading-6",
+          "block w-full rounded-lg text-brand-900 dark:text-brand-100 focus:ring-0 sm:text-sm sm:leading-6",
           "phx-no-feedback:border-brand-300 phx-no-feedback:focus:border-brand-400",
           @errors == [] && "border-brand-300 dark:border-brand-700 focus:border-brand-400",
           @errors != [] && "border-rose-400 dark:border-rose-600 focus:border-rose-400",
@@ -496,14 +498,17 @@ defmodule SnapidWeb.CoreComponents do
     <div class="w-screen md:w-full -mx-6 sm:-mx-10 md:mx-0">
       <table class="mt-11 w-full">
         <thead class="text-sm text-left leading-6 text-brand-700 dark:text-brand-300">
-          <tr>
+          <tr class="border-b border-brand-200 dark:border-brand-400">
             <th
               :for={{col, i} <- Enum.with_index(@col)}
               class={"p-0 pb-4 font-normal sm:pr-6 sm:text-left #{if i == 0, do: "pr-6 text-left pl-6 sm:pl-10", else: "pl-6 text-right"}"}
             >
               <%= col[:label] %>
             </th>
-            <th :if={@action != []} class="hidden sm:block relative p-0 pb-4">
+            <th
+              :if={@action != []}
+              class={"#{if not @show_actions_on_mobile, do: "hidden w-full"} sm:block relative p-0 pr-6 sm:pr-10 md:pr-0"}
+            >
               <span class="sr-only"><%= gettext("Actions") %></span>
             </th>
           </tr>
@@ -511,12 +516,12 @@ defmodule SnapidWeb.CoreComponents do
         <tbody
           id={@id}
           phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-          class="relative divide-y divide-brand-600 dark:divide-brand-400 border-y border-brand-600 dark:border-brand-400 text-sm leading-6 text-brand-700 dark:text-brand-300"
+          class="relative text-sm leading-6 text-brand-700 dark:text-brand-300"
         >
           <tr
             :for={row <- @rows}
             id={@row_id && @row_id.(row)}
-            class="group hover:bg-brand-100 dark:hover:bg-brand-700"
+            class="group hover:bg-brand-100 dark:hover:bg-brand-700 border-b border-brand-200 dark:border-brand-400"
           >
             <td
               :for={{col, i} <- Enum.with_index(@col)}
@@ -524,7 +529,7 @@ defmodule SnapidWeb.CoreComponents do
               class={[
                 "relative p-0",
                 @row_click && "hover:cursor-pointer",
-                i == 0 && "pl-6 sm:pl-10"
+                i == 0 && "pl-6 sm:pl-10 md:pl-6"
               ]}
             >
               <div class={"block py-4 sm:pr-6 sm:text-left #{if i == 0, do: "pr-6 text-left", else: "pl-6 text-right"}"}>
@@ -539,7 +544,7 @@ defmodule SnapidWeb.CoreComponents do
             </td>
             <td
               :if={@action != []}
-              class={"#{if not @show_actions_on_mobile, do: "hidden w-full"} sm:block relative p-0 pr-6 sm:pr-10 md:pr-0"}
+              class={"#{if not @show_actions_on_mobile, do: "hidden w-full"} sm:block relative p-0 pr-6 sm:pr-10 md:pr-6"}
             >
               <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
                 <span class="absolute right-4 left-0 sm:rounded-r-xl" />

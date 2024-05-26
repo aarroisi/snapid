@@ -3,6 +3,7 @@ defmodule SnapidWeb.Components.Dropdown do
 
   attr :title, :string, default: "Title", doc: "Title of the dropdown"
   attr :items, :list, default: [], doc: "List of items"
+  attr :row_id, :string
 
   slot :title_icon
 
@@ -14,7 +15,7 @@ defmodule SnapidWeb.Components.Dropdown do
           x-on:click="options_open = !options_open"
           type="button"
           class="inline-flex w-full justify-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold text-brand-900 dark:text-brand-100 shadow-sm ring-1 ring-inset ring-brand-300 hover:bg-brand-50 dark:hover:bg-brand-950"
-          id="menu-button"
+          id={"menu-button-#{@row_id}"}
           aria-expanded="true"
           aria-haspopup="true"
         >
@@ -56,13 +57,15 @@ defmodule SnapidWeb.Components.Dropdown do
         <div class="py-1" role="none">
           <.link
             :for={{item, index} <- Enum.with_index(@items)}
+            x-on:click="options_open = false"
             navigate={item.href}
             phx-click={item.phx_click}
+            phx-value-id={item.phx_value_id}
             data-confirm={item.data_confirm}
             class={"text-brand-700 dark:text-brand-300 block px-4 py-2 text-sm hover:bg-brand-100 dark:hover:bg-brand-900 #{item.class}"}
             role="menuitem"
             tabindex="-1"
-            id={"menu-item-#{index}"}
+            id={"menu-item-#{@row_id}-#{index}"}
           >
             <%= item.title %>
           </.link>

@@ -45,6 +45,22 @@ let liveSocket = new LiveSocket("/live", Socket, {
 topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
 window.addEventListener("phx:page-loading-start", (_info) => topbar.show(300));
 window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
+window.addEventListener("phx:open-modal", (e) => {
+  elements = document.querySelectorAll(`[data-open]`);
+  elements.forEach((el) => {
+    if (el.id == e.detail.id) {
+      liveSocket.execJS(el, el.getAttribute("data-open"));
+    }
+  });
+});
+window.addEventListener("phx:close-modal", (e) => {
+  elements = document.querySelectorAll(`[data-cancel]`);
+  elements.forEach((el) => {
+    if (el.id == e.detail.id) {
+      liveSocket.execJS(el, el.getAttribute("data-cancel"));
+    }
+  });
+});
 
 // connect if there are any LiveViews on the page
 liveSocket.connect();

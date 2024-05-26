@@ -5,6 +5,7 @@ defmodule Snapid.Snaps.Snap do
 
   schema "threads" do
     field :title, :string
+    field :description, :string
     field :body, :string
     field :user_id, :integer
     field :slug, :string
@@ -18,9 +19,12 @@ defmodule Snapid.Snaps.Snap do
   @doc false
   def changeset(snap, attrs) do
     snap
-    |> cast(attrs, [:title, :body, :user_id, :slug, :is_published])
+    |> cast(attrs, [:title, :description, :body, :user_id, :slug, :is_published])
     |> maybe_put_slug()
+    |> validate_length(:title, max: 255)
+    |> validate_length(:description, max: 255)
     |> validate_required([:title, :body, :user_id, :slug])
+    |> unique_constraint(:slug)
   end
 
   defp maybe_put_slug(%Changeset{} = changeset) do
