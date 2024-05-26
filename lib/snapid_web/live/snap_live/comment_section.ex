@@ -7,7 +7,10 @@ defmodule SnapidWeb.SnapLive.CommentSection do
     <div id={@id} class="flex flex-col w-full">
       <%!-- Previous Comments --%>
       <%!-- New Comments --%>
-      <div id="new-comment-trigger" class="border-t border-brand-200 dark:border-brand-400 pt-4">
+      <div
+        id="new-comment-trigger"
+        class="border-t border-brand-200 dark:border-brand-400 pt-4 min-h-20"
+      >
         <span
           phx-click={
             JS.toggle_class("hidden",
@@ -29,29 +32,27 @@ defmodule SnapidWeb.SnapLive.CommentSection do
 
   def new_comment(assigns) do
     ~H"""
-    <div id={@id} class="hidden w-full border-t border-brand-200 dark:border-brand-400 pb-4 min-h-28">
-      <div class="flex flex-col border-t border-x border-brand-200 dark:border-brand-400 mt-4">
-        <div
-          id="trix-toolbar-wrapper"
-          class="!p-0 md:!p-2 !m-0 w-full border-b border-brand-200 dark:border-brand-400 z-50 bg-white dark:bg-brand-500"
-          phx-update="ignore"
+    <div id={@id} class="hidden py-4 w-full border-t border-brand-200 dark:border-brand-400 min-h-28">
+      <div
+        id="trix-toolbar-wrapper"
+        class="!p-0 md:!p-2 !m-0 w-full md:border-x md:border-t border-brand-200 dark:border-brand-400 z-50 bg-white dark:bg-brand-500"
+        phx-update="ignore"
+      >
+        <trix-toolbar id="trix-toolbar-1"></trix-toolbar>
+      </div>
+      <div
+        id="trix-editor-wrapper"
+        class="mt-1 md:mt-0 border border-brand-200 dark:border-brand-400"
+        phx-update="ignore"
+      >
+        <trix-editor
+          toolbar="trix-toolbar-1"
+          autofocus
+          input="content"
+          class="!mx-0 !my-1 border-0 px-4 !py-2 trix-content"
+          placeholder="Write your comment here.."
         >
-          <trix-toolbar id="trix-toolbar-1"></trix-toolbar>
-        </div>
-        <div
-          id="trix-editor-wrapper"
-          class="border-b border-brand-200 dark:border-brand-400"
-          phx-update="ignore"
-        >
-          <trix-editor
-            toolbar="trix-toolbar-1"
-            autofocus
-            input="content"
-            class="!mx-0 !my-1 border-0 px-4 !py-2 trix-content"
-            placeholder="Write your comment here.."
-          >
-          </trix-editor>
-        </div>
+        </trix-editor>
       </div>
       <div class="flex justify-between mt-4">
         <.button
