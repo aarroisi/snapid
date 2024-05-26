@@ -42,9 +42,12 @@ defmodule SnapidWeb.SnapLive.Index do
     >
       <:col :let={{_id, snap}} label="Title"><%= snap.title %></:col>
       <:col :let={{_id, snap}} label="Created"><%= snap.inserted_at |> Timex.from_now() %></:col>
+      <:col :let={{_id, snap}} label_class="!text-center">
+        <%= is_published_icon(%{snap: snap}) %>
+      </:col>
       <:action :let={{id, snap}}>
-        <.dropdown title="Actions" items={get_actions(id, snap)} row_id={id}>
-          <:title_icon><.icon name="hero-pencil-square" class="w-5 h-5" /></:title_icon>
+        <.dropdown wrapper_class="ml-auto" title="Actions" items={get_actions(id, snap)} row_id={id}>
+          <:title_icon><.icon name="hero-ellipsis-vertical-solid" class="w-5 h-5" /></:title_icon>
         </.dropdown>
       </:action>
     </.table>
@@ -63,7 +66,7 @@ defmodule SnapidWeb.SnapLive.Index do
           phx_click="publish_or_unpublish_snap"
           phx_value_id={@config_snap.id}
         />
-        <hr />
+        <hr class="!border-brand-200 dark:!border-brand-400" />
         <.simple_form for={@form} id="configure-snap" phx-submit="save_snap">
           <.input wrapper_class="hidden" type="text" field={@form[:id]} />
           <.input_overlap label="Title" field={@form[:title]} />
@@ -83,6 +86,18 @@ defmodule SnapidWeb.SnapLive.Index do
     """
   end
 
+  def is_published_icon(assigns) do
+    ~H"""
+    <div class="flex items-center justify-center">
+      <%= if @snap.is_published do %>
+        <.icon name="hero-check-circle-solid bg-green-500" class="h-5 w-5" />
+      <% else %>
+        <.icon name="hero-minus-circle-solid bg-yellow-500" class="h-5 w-5" />
+      <% end %>
+    </div>
+    """
+  end
+
   @impl true
   def mount(_params, _session, socket) do
     current_user_id = socket.assigns.current_user.id
@@ -99,28 +114,44 @@ defmodule SnapidWeb.SnapLive.Index do
   defp get_actions(id, snap) do
     [
       %{
+        is_shown: snap.is_published,
+        href: ~p"/public/#{snap.slug}",
+        title: "View",
+        phx_click: nil,
+        phx_value_id: nil,
+        data_confirm: nil,
+        class: nil,
+        target: "_blank"
+      },
+      %{
+        is_shown: true,
         href: nil,
         title: "Configure",
         phx_click: "configure_snap",
         phx_value_id: snap.id,
         data_confirm: nil,
-        class: nil
+        class: nil,
+        target: nil
       },
       %{
+        is_shown: true,
         href: ~p"/snaps/#{snap}/edit",
         title: "Edit",
         phx_click: nil,
         phx_value_id: nil,
         data_confirm: nil,
-        class: nil
+        class: nil,
+        target: nil
       },
       %{
+        is_shown: true,
         href: nil,
         title: "Delete",
         phx_click: JS.push("delete", value: %{id: snap.id}) |> hide("##{id}"),
         phx_value_id: nil,
         data_confirm: nil,
-        class: "!text-red-600"
+        class: "!text-red-600",
+        target: nil
       }
     ]
   end
@@ -159,9 +190,9 @@ defmodule SnapidWeb.SnapLive.Index do
 
     message =
       if snap.is_published do
-        "Snap is successfully published."
-      else
         "Snap is successfully unpublished."
+      else
+        "Snap is successfully published."
       end
 
     params = %{"is_published" => not snap.is_published}

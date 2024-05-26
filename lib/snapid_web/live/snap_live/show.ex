@@ -82,6 +82,7 @@ defmodule SnapidWeb.SnapLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, snap.title))
+     |> assign(:og_description, snap.description)
      |> assign(:snap, snap)}
   end
 

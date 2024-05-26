@@ -54,7 +54,7 @@ defmodule SnapidWeb.CoreComponents do
     >
       <div
         id={"#{@id}-bg"}
-        class="bg-brand-50/90 fixed inset-0 transition-opacity"
+        class="bg-brand-50/90 dark:bg-brand-950/90 fixed inset-0 transition-opacity"
         aria-hidden="true"
       />
       <div
@@ -484,6 +484,7 @@ defmodule SnapidWeb.CoreComponents do
 
   slot :col, required: true do
     attr :label, :string
+    attr :label_class, :string
   end
 
   slot :action, doc: "the slot for showing user actions in the last table column"
@@ -501,7 +502,7 @@ defmodule SnapidWeb.CoreComponents do
           <tr class="border-b border-brand-200 dark:border-brand-400">
             <th
               :for={{col, i} <- Enum.with_index(@col)}
-              class={"p-0 pb-4 font-normal sm:pr-6 sm:text-left #{if i == 0, do: "pr-6 text-left pl-6 sm:pl-10", else: "pl-6 text-right"}"}
+              class={"p-0 pb-4 font-normal sm:pr-6 sm:text-left #{if i == 0, do: "pr-6 text-left pl-6 sm:pl-10", else: "pl-6 text-right"} #{col[:label_class] || ""}"}
             >
               <%= col[:label] %>
             </th>
@@ -550,7 +551,7 @@ defmodule SnapidWeb.CoreComponents do
                 <span class="absolute right-4 left-0 sm:rounded-r-xl" />
                 <span
                   :for={action <- @action}
-                  class="relative ml-4 font-semibold leading-6 text-brand-900 dark:text-brand-100"
+                  class="flex relative ml-4 font-semibold leading-6 text-brand-900 dark:text-brand-100"
                 >
                   <%= render_slot(action, @row_item.(row)) %>
                 </span>
