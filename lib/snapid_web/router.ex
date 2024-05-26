@@ -79,13 +79,11 @@ defmodule SnapidWeb.Router do
   scope "/", SnapidWeb do
     pipe_through [:browser]
 
-    live "/public/:slug", SnapLive.Show, :show_public
     delete "/users/log_out", UserSessionController, :delete
 
     live_session :current_user,
       on_mount: [{SnapidWeb.UserAuth, :mount_current_user}] do
-      live "/users/confirm/:token", UserConfirmationLive, :edit
-      live "/users/confirm", UserConfirmationInstructionsLive, :new
+      live "/public/:slug", SnapLive.Show, :show_public
     end
   end
 end

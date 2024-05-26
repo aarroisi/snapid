@@ -5,6 +5,7 @@
 /* This file is for your main application CSS */
 .trix-button-group {
     background-color: white;
+    margin-bottom: 0 !important;
 }
 
 .trix-content {

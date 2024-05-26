@@ -46,12 +46,18 @@ defmodule SnapidWeb.SnapLive.Show do
         </.link>
       </div>
     <% end %>
+    <.live_component
+      :if={@live_action == :show_public and assigns[:current_user]}
+      module={SnapidWeb.SnapLive.CommentSection}
+      id={"comment-section-#{@snap.id}"}
+      current_user={@current_user}
+    />
 
     <.live_component
       :if={@live_action == :edit}
       module={SnapidWeb.SnapLive.FormComponent}
+      id={"form-#{@snap.id}"}
       current_user={@current_user}
-      id={@snap.id}
       title={@page_title}
       action={@live_action}
       snap={@snap}
