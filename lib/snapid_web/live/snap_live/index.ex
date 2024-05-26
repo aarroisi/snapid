@@ -47,7 +47,7 @@ defmodule SnapidWeb.SnapLive.Index do
       </:col>
       <:action :let={{id, snap}}>
         <.dropdown wrapper_class="ml-auto" title="Actions" items={get_actions(id, snap)} row_id={id}>
-          <:title_icon><.icon name="hero-ellipsis-vertical-solid" class="w-5 h-5" /></:title_icon>
+          <:title_icon><.icon name="hero-ellipsis-vertical-solid" class="w-6 h-6" /></:title_icon>
         </.dropdown>
       </:action>
     </.table>
