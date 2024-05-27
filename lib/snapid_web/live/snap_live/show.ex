@@ -6,8 +6,8 @@ defmodule SnapidWeb.SnapLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    <%= if @live_action == :show do %>
-      <div class="md:hidden flex justify-between z-50 -mx-6 sm:-mx-10 -mt-8 sm:-mt-12 mb-6 border-b border-brand-200 dark:border-brand-400 sticky top-0 p-3 pl bottom-0 w-screen bg-white dark:bg-brand-500">
+    <div :if={@live_action == :show} class="mb-4">
+      <div class="flex justify-between z-50 -mx-6 sm:-mx-10 md:mx-auto -mt-8 sm:-mt-12 md:-mt-6 mb-6 md:mb-0 border-b md:border-none border-brand-200 dark:border-brand-400 sticky top-0 p-3 md:!px-0 pl bottom-0 w-screen md:w-full bg-white dark:bg-brand-500">
         <.back class="my-auto text-sm" navigate={~p"/snaps"}>Back to snaps</.back>
         <.link navigate={~p"/snaps/#{@snap}/edit"}>
           <.button class="!bg-primary-600 hover:!bg-primary-700 !px-2 !py-1 text-sm">
@@ -15,9 +15,10 @@ defmodule SnapidWeb.SnapLive.Show do
           </.button>
         </.link>
       </div>
-    <% end %>
+      <hr class="hidden md:block !m-0 border-brand-200 dark:border-brand-400" />
+    </div>
     <%= if @live_action in [:show, :show_public] do %>
-      <.header class="mb-6">
+      <.header class="mb-5">
         <h1 class="text-2xl md:text-3xl font-bold"><%= @snap.title %></h1>
         <p class="text-sm mt-3">
           <%= if @snap.user["email"] do %>
@@ -36,15 +37,6 @@ defmodule SnapidWeb.SnapLive.Show do
       </.header>
       <hr class="!m-0 border-brand-200 dark:border-brand-400" />
       <div class="!my-4 trix-content"><%= raw(@snap.body) %></div>
-    <% end %>
-    <%= if @live_action == :show do %>
-      <hr class="hidden md:block !m-0 border-brand-200 dark:border-brand-400" />
-      <div class="hidden md:flex flex-row justify-between md:p-0 md:relative w-full mt-8">
-        <.back class="my-auto" navigate={~p"/snaps"}>Back to snaps</.back>
-        <.link navigate={~p"/snaps/#{@snap}/edit"}>
-          <.button class="!bg-primary-600 hover:!bg-primary-700">Edit snap</.button>
-        </.link>
-      </div>
     <% end %>
     <.live_component
       :if={@live_action == :show_public and assigns[:current_user]}

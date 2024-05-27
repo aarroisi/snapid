@@ -9,27 +9,29 @@ defmodule SnapidWeb.SnapLive.FormComponent do
       <.simple_form
         for={@form}
         id="snap-form"
-        top_actions_class="md:hidden flex justify-between z-50 -mx-6 sm:-mx-10 -mt-8 sm:-mt-12 !mb-6 border-b border-brand-200 dark:border-brand-400 sticky top-0 !p-3 bottom-0 w-screen bg-white dark:bg-brand-500"
-        actions_class="hidden md:flex p-0 relative left-auto bottom-auto justify-between"
+        top_actions_class="mb-4"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
       >
         <:top_actions>
-          <.button
-            class="!bg-secondary-500 hover:!bg-secondary-600 text-sm !py-1 !px-2"
-            type="button"
-            phx-click={JS.navigate(@patch)}
-          >
-            Cancel
-          </.button>
-          <.button
-            class="!bg-primary-600 hover:!bg-primary-700 text-sm !py-1 !px-2"
-            type="submit"
-            phx-disable-with="Saving..."
-          >
-            Save Snap
-          </.button>
+          <div class="flex justify-between z-50 -mx-6 sm:-mx-10 -mt-8 sm:-mt-12 md:mx-auto md:-mt-6 md:!w-full !mb-6 md:!mb-0 border-b md:border-none border-brand-200 dark:border-brand-400 sticky top-0 !p-3 md:!px-0 bottom-0 w-screen bg-white dark:bg-brand-500">
+            <.button
+              class="!bg-secondary-500 hover:!bg-secondary-600 text-sm !py-1 !px-2"
+              type="button"
+              phx-click={JS.navigate(@patch)}
+            >
+              Cancel
+            </.button>
+            <.button
+              class="!bg-primary-600 hover:!bg-primary-700 text-sm !py-1 !px-2"
+              type="submit"
+              phx-disable-with="Saving..."
+            >
+              Save Snap
+            </.button>
+          </div>
+          <hr class="hidden md:block !m-0 border-brand-200 dark:border-brand-400" />
         </:top_actions>
 
         <.input
@@ -49,7 +51,7 @@ defmodule SnapidWeb.SnapLive.FormComponent do
         />
         <div
           id="trix-toolbar-wrapper"
-          class="w-full !m-0 !mt-4 border-y border-brand-200 dark:border-brand-400 sticky top-[56px] md:top-0 z-50 bg-white dark:bg-brand-500"
+          class="w-full !m-0 !mt-4 !pb-[10px] border-y border-brand-200 dark:border-brand-400 sticky top-[56px] md:top-0 z-50 bg-white dark:bg-brand-500"
           phx-update="ignore"
         >
           <trix-toolbar id="trix-toolbar-1" class="mt-[10px]"></trix-toolbar>
@@ -64,24 +66,7 @@ defmodule SnapidWeb.SnapLive.FormComponent do
           >
           </trix-editor>
         </div>
-
         <hr class="!m-0 border-brand-200 dark:border-brand-400" />
-        <:actions>
-          <.button
-            class="!bg-secondary-500 hover:!bg-secondary-600"
-            type="button"
-            phx-click={JS.navigate(@patch)}
-          >
-            Cancel
-          </.button>
-          <.button
-            class="!bg-primary-600 hover:!bg-primary-700"
-            type="submit"
-            phx-disable-with="Saving..."
-          >
-            Save Snap
-          </.button>
-        </:actions>
       </.simple_form>
     </div>
     """

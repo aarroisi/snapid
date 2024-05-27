@@ -607,7 +607,7 @@ defmodule SnapidWeb.CoreComponents do
     <div class={[@class]}>
       <.link
         navigate={@navigate}
-        class="text-sm font-semibold leading-6 text-brand-900 dark:text-brand-100 hover:text-brand-700 dark:hover:text-brand-300"
+        class="text-sm leading-6 text-brand-900 dark:text-brand-100 hover:text-brand-700 dark:hover:text-brand-300"
       >
         <.icon name="hero-arrow-left-solid" class="h-3 w-3" />
         <%= render_slot(@inner_block) %>
