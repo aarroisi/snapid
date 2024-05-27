@@ -28,7 +28,7 @@ defmodule SnapidWeb.SnapLive.Show do
         <.link
           :if={@live_action == :show and not is_nil(@snap.slug)}
           target="_blank"
-          navigate={~p"/public/#{@snap.slug}"}
+          navigate={~p"/p/#{@snap.slug}"}
           class="text-sm mt-3 underline"
         >
           /<%= @snap.slug %>

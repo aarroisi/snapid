@@ -70,7 +70,7 @@ defmodule SnapidWeb.SnapLive.Index do
         <.simple_form for={@form} id="configure-snap" phx-submit="save_snap">
           <.input wrapper_class="hidden" type="text" field={@form[:id]} />
           <.input_overlap label="Title" field={@form[:title]} />
-          <.input_with_addon label="Slug" field={@form[:slug]} addon="snapid.fly.dev/public/" />
+          <.input_with_addon label="Slug" field={@form[:slug]} addon="snapid.fly.dev/p/" />
           <.textarea_overlap label="Description" field={@form[:description]} />
           <div class="mt-2 flex justify-end">
             <button
@@ -115,7 +115,7 @@ defmodule SnapidWeb.SnapLive.Index do
     [
       %{
         is_shown: snap.is_published,
-        href: ~p"/public/#{snap.slug}",
+        href: ~p"/p/#{snap.slug}",
         title: "View",
         phx_click: nil,
         phx_value_id: nil,

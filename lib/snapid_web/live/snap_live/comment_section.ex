@@ -17,7 +17,7 @@ defmodule SnapidWeb.SnapLive.CommentSection do
               to: ["#new-comment-trigger", "#new-comment"]
             )
           }
-          class="cursor-pointer text-gray-200 dark:text-gray-400"
+          class="cursor-pointer text-gray-400"
         >
           Add a comment here...
         </span>
@@ -35,14 +35,14 @@ defmodule SnapidWeb.SnapLive.CommentSection do
     <div id={@id} class="hidden py-4 w-full border-t border-brand-200 dark:border-brand-400 min-h-28">
       <div
         id="trix-toolbar-wrapper"
-        class="!p-0 md:!p-2 !m-0 w-full md:border-x md:border-t border-brand-200 dark:border-brand-400 z-50 bg-white dark:bg-brand-500"
+        class="!p-0 !m-0 w-full z-50 bg-white dark:bg-brand-500"
         phx-update="ignore"
       >
         <trix-toolbar id="trix-toolbar-1"></trix-toolbar>
       </div>
       <div
         id="trix-editor-wrapper"
-        class="mt-1 md:mt-0 border border-brand-200 dark:border-brand-400"
+        class="mt-1 border border-brand-200 dark:border-brand-400"
         phx-update="ignore"
       >
         <trix-editor

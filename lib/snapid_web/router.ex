@@ -83,7 +83,7 @@ defmodule SnapidWeb.Router do
 
     live_session :current_user,
       on_mount: [{SnapidWeb.UserAuth, :mount_current_user}] do
-      live "/public/:slug", SnapLive.Show, :show_public
+      live "/p/:slug", SnapLive.Show, :show_public
     end
   end
 end
