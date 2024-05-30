@@ -33,7 +33,7 @@ defmodule SnapidWeb.SnapLive.Comment do
 
   def new_comment(assigns) do
     ~H"""
-    <div id={@id} class="hidden py-4 w-full border-t border-brand-200 dark:border-brand-400 min-h-28">
+    <div id={@id} class="py-4 w-full border-t border-brand-200 dark:border-brand-400 min-h-28">
       <.simple_form for={@form} id="comment" top_actions_class="mb-4" phx-submit="add_comment">
         <.input
           id="comment-content"
@@ -49,11 +49,14 @@ defmodule SnapidWeb.SnapLive.Comment do
         >
           <trix-toolbar id="trix-toolbar-1"></trix-toolbar>
         </div>
-        <div id="trix-editor-wrapper" class="!mt-1 border border-brand-200 dark:border-brand-400">
+        <div
+          id="trix-editor-wrapper"
+          class="!mt-1 border border-brand-200 dark:border-brand-400"
+          phx-update="ignore"
+        >
           <trix-editor
             id="editor-comment"
             toolbar="trix-toolbar-1"
-            phx-update="ignore"
             phx-hook="TrixEditor"
             autofocus
             input="comment-content"

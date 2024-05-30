@@ -52,26 +52,15 @@ defmodule SnapidWeb.SnapLive.Show do
       </div>
       <%!-- New Comments --%>
       <div
+        :if={not @add_comment}
         id="new-comment-trigger"
-        data-reset={
-          JS.toggle_class("hidden",
-            to: ["#new-comment-trigger", "#new-comment"]
-          )
-        }
         class="border-t border-brand-200 dark:border-brand-400 pt-4 min-h-36"
       >
-        <span
-          phx-click={
-            JS.toggle_class("hidden",
-              to: ["#new-comment-trigger", "#new-comment"]
-            )
-          }
-          class="cursor-pointer text-gray-400"
-        >
+        <span phx-click="show_add_comment" class="cursor-pointer text-gray-400">
           Add a comment here...
         </span>
       </div>
-      <.new_comment id="new-comment" form={@form} snap_id={@snap.id} />
+      <.new_comment :if={@add_comment} id="new-comment" form={@form} snap_id={@snap.id} />
     </div>
 
     <.live_component
@@ -113,6 +102,7 @@ defmodule SnapidWeb.SnapLive.Show do
      |> assign(:page_title, page_title(socket.assigns.live_action, snap.title))
      |> assign(:og_description, snap.description)
      |> assign(:snap, snap)
+     |> assign(:add_comment, false)
      |> stream(:comments, comments)
      |> assign_form(changeset)}
   end
@@ -120,6 +110,10 @@ defmodule SnapidWeb.SnapLive.Show do
   @impl true
   def handle_event("add_comment", %{"comment" => comment_params}, socket) do
     save_comment(socket, :new, comment_params)
+  end
+
+  def handle_event("show_add_comment", _params, socket) do
+    {:noreply, assign(socket, :add_comment, true)}
   end
 
   defp save_comment(socket, :new, comment_params) do
@@ -135,9 +129,8 @@ defmodule SnapidWeb.SnapLive.Show do
         {:noreply,
          socket
          |> stream_insert(:comments, comment)
-         |> assign_form(changeset)
-         |> push_event("reset_trix_editor", %{})
-         |> push_event("reset", %{"id" => "new-comment-trigger"})}
+         |> assign(:add_comment, false)
+         |> assign_form(changeset)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
