@@ -13,12 +13,12 @@ defmodule SnapidWeb.SnapLive.Comment do
       id={@dom_id}
       class="flex flex-col md:flex-row gap-x-2 md:gap-x-6 trix-content border-t border-brand-200 dark:border-brand-400 py-4"
     >
-      <div class="flex text-xs sm:text-sm md:text-base flex-row md:flex-col gap-x-2 w-24 !min-w-24 font-extralight">
+      <div class="flex text-xs sm:text-sm md:text-base flex-row md:flex-col gap-x-2 w-20 !min-w-20 font-extralight">
         <% {date, time} = Snapid.Util.date_string(@comment.inserted_at, "Asia/Jakarta") %>
         <div><%= date %></div>
         <div><%= time %></div>
       </div>
-      <div class="flex flex-col">
+      <div class="flex flex-col gap-y-2 md:gap-y-1">
         <div class="font-semibold"><%= @comment.user["fullname"] %></div>
         <div><%= raw(@comment.body) %></div>
       </div>
