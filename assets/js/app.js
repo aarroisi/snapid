@@ -36,7 +36,18 @@ let liveSocket = new LiveSocket("/live", Socket, {
       }
     },
   },
-  hooks: { TrixHooks: TrixHooks },
+  hooks: {
+    TrixHooks: TrixHooks,
+    ScrollBottom: {
+      mounted() {
+        this.handleEvent("scroll_to_view", (e) => {
+          setTimeout(() => {
+            document.getElementById(e.id).scrollIntoView(true);
+          }, 50);
+        });
+      },
+    },
+  },
 });
 
 // Show progress bar on live navigation and form submits

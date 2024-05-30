@@ -11,9 +11,9 @@ defmodule SnapidWeb.SnapLive.Comment do
     ~H"""
     <div
       id={@dom_id}
-      class="flex flex-row gap-x-2 md:gap-x-6 trix-content border-t border-brand-200 dark:border-brand-400 py-4"
+      class="flex flex-col md:flex-row gap-x-2 md:gap-x-6 trix-content border-t border-brand-200 dark:border-brand-400 py-4"
     >
-      <div class="flex flex-col w-24 !min-w-24 font-extralight">
+      <div class="flex text-xs sm:text-sm md:text-base flex-row md:flex-col gap-x-2 w-24 !min-w-24 font-extralight">
         <% {date, time} = Snapid.Util.date_string(@comment.inserted_at, "Asia/Jakarta") %>
         <div><%= date %></div>
         <div><%= time %></div>
@@ -56,8 +56,8 @@ defmodule SnapidWeb.SnapLive.Comment do
         >
           <trix-editor
             id="editor-comment"
+            phx-hook="ScrollBottom"
             toolbar="trix-toolbar-1"
-            phx-hook="TrixEditor"
             autofocus
             input="comment-content"
             class="!mx-0 !my-1 border-0 px-4 !py-2 trix-content"
@@ -69,11 +69,7 @@ defmodule SnapidWeb.SnapLive.Comment do
           <.button
             class="!bg-secondary-500 hover:!bg-secondary-600 text-sm !py-1 !px-2"
             type="button"
-            phx-click={
-              JS.toggle_class("hidden",
-                to: ["#new-comment-trigger", "#new-comment"]
-              )
-            }
+            phx-click="cancel_add_comment"
           >
             Cancel
           </.button>

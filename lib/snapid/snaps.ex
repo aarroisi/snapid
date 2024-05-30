@@ -6,6 +6,7 @@ defmodule Snapid.Snaps do
   import Ecto.Query
   alias Snapid.Snaps.Comment
   alias Snapid.Repo
+  alias SnapidWeb.Endpoint
 
   alias Snapid.Snaps.Snap
 
@@ -232,7 +233,11 @@ defmodule Snapid.Snaps do
     |> case do
       {:ok, comment} ->
         user = Snapid.Auth.get_user_by_id(comment.user_id)["data"]
-        {:ok, Map.put(comment, :user, user)}
+        comment = Map.put(comment, :user, user)
+
+        publish_comment_created({:ok, comment})
+
+        {:ok, comment}
 
       {:error, error} ->
         {:error, error}
@@ -244,4 +249,11 @@ defmodule Snapid.Snaps do
     |> Comment.changeset(attrs)
     |> Repo.update()
   end
+
+  def publish_comment_created({:ok, comment} = result) do
+    Endpoint.broadcast("snap:#{comment.snap_id}", "new_comment", %{comment: comment})
+    result
+  end
+
+  def publish_message_created(result), do: result
 end

@@ -1,6 +1,7 @@
 defmodule SnapidWeb.SnapLive.Show do
   use SnapidWeb, :live_view
   alias Snapid.Snaps
+  alias SnapidWeb.Endpoint
   alias Snapid.Snaps.Comment
   import SnapidWeb.SnapLive.Comment
 
@@ -54,7 +55,7 @@ defmodule SnapidWeb.SnapLive.Show do
       <div
         :if={not @add_comment}
         id="new-comment-trigger"
-        class="border-t border-brand-200 dark:border-brand-400 pt-4 min-h-36"
+        class="border-t border-brand-200 dark:border-brand-400 pt-4 min-h-48"
       >
         <span phx-click="show_add_comment" class="cursor-pointer text-gray-400">
           Add a comment here...
@@ -97,6 +98,10 @@ defmodule SnapidWeb.SnapLive.Show do
     comments = Snaps.list_comments(snap.id)
     changeset = Snaps.change_comment(%Comment{})
 
+    if connected?(socket) do
+      Endpoint.subscribe("snap:#{snap.id}")
+    end
+
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, snap.title))
@@ -113,7 +118,18 @@ defmodule SnapidWeb.SnapLive.Show do
   end
 
   def handle_event("show_add_comment", _params, socket) do
-    {:noreply, assign(socket, :add_comment, true)}
+    {:noreply,
+     assign(socket, :add_comment, true)
+     |> push_event("scroll_to_view", %{"id" => "editor-comment"})}
+  end
+
+  def handle_event("cancel_add_comment", _params, socket) do
+    {:noreply, assign(socket, :add_comment, false)}
+  end
+
+  @impl true
+  def handle_info(%{event: "new_comment", payload: %{comment: comment}}, socket) do
+    {:noreply, stream_insert(socket, :comments, comment)}
   end
 
   defp save_comment(socket, :new, comment_params) do
@@ -128,7 +144,6 @@ defmodule SnapidWeb.SnapLive.Show do
 
         {:noreply,
          socket
-         |> stream_insert(:comments, comment)
          |> assign(:add_comment, false)
          |> assign_form(changeset)}
 
