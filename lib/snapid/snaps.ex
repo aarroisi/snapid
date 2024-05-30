@@ -4,6 +4,7 @@ defmodule Snapid.Snaps do
   """
 
   import Ecto.Query
+  alias Snapid.Snaps.Comment
   alias Snapid.Repo
 
   alias Snapid.Snaps.Snap
@@ -148,6 +149,8 @@ defmodule Snapid.Snaps do
     Snap.changeset(snap, attrs)
   end
 
+  # Users
+
   defp load_user(%Snap{} = snap) do
     user =
       case snap.user_id do
@@ -167,4 +170,56 @@ defmodule Snapid.Snaps do
   end
 
   defp load_user(nil), do: nil
+
+  # Comments
+
+  defp comment_base_filter(snap_id) when not is_nil(snap_id) do
+    from(
+      c in Comment,
+      where: c.snap_id == ^snap_id
+    )
+  end
+
+  def list_comments(snap_id, params \\ %{}) when not is_nil(snap_id) do
+    page_size = Map.get(params, :page_size) || 25
+    last_id = Map.get(params, :last_id)
+    parent_comment_id = Map.get(params, :parent_comment_id)
+
+    comment_base_filter(snap_id)
+    |> order_by([c], desc: c.inserted_at)
+    |> limit([c], ^page_size)
+    |> maybe_filter_by_id(last_id)
+    |> maybe_filter_by(:parent_comment_id, parent_comment_id)
+    |> Repo.all()
+    |> Enum.reverse()
+  end
+
+  defp maybe_filter_by_id(query, last_id) do
+    if is_nil(last_id) do
+      query
+    else
+      query
+      |> where([c], c.id < ^last_id)
+    end
+  end
+
+  def get_comment!(id) do
+    Repo.get!(Comment, id)
+  end
+
+  def change_comment(%Comment{} = comment, attrs \\ %{}) do
+    Comment.changeset(comment, attrs)
+  end
+
+  def create_comment(attrs \\ %{}) do
+    %Comment{}
+    |> Comment.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_comment(%Comment{} = snap, attrs) do
+    snap
+    |> Comment.changeset(attrs)
+    |> Repo.update()
+  end
 end

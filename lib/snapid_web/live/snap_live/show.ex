@@ -1,7 +1,8 @@
 defmodule SnapidWeb.SnapLive.Show do
   use SnapidWeb, :live_view
-
   alias Snapid.Snaps
+  alias Snapid.Snaps.Comment
+  import SnapidWeb.SnapLive.Comment
 
   @impl true
   def render(assigns) do
@@ -38,12 +39,35 @@ defmodule SnapidWeb.SnapLive.Show do
       <hr class="!m-0 border-brand-200 dark:border-brand-400" />
       <div class="!my-4 trix-content"><%= raw(@snap.body) %></div>
     <% end %>
-    <.live_component
+
+    <div
       :if={@live_action == :show_public and assigns[:current_user]}
-      module={SnapidWeb.SnapLive.CommentSection}
       id={"comment-section-#{@snap.id}"}
-      current_user={@current_user}
-    />
+      class="flex flex-col w-full border-t border-brand-200 dark:border-brand-400"
+    >
+      <div class="mt-6 mb-2 font-semibold">Comments</div>
+      <%!-- Previous Comments --%>
+      <div id="comments-container" phx-update="stream">
+        <.comment :for={{dom_id, comment} <- @streams.comments} dom_id={dom_id} comment={comment} />
+      </div>
+      <%!-- New Comments --%>
+      <div
+        id="new-comment-trigger"
+        class="border-t border-brand-200 dark:border-brand-400 pt-4 min-h-36"
+      >
+        <span
+          phx-click={
+            JS.toggle_class("hidden",
+              to: ["#new-comment-trigger", "#new-comment"]
+            )
+          }
+          class="cursor-pointer text-gray-400"
+        >
+          Add a comment here...
+        </span>
+      </div>
+      <.new_comment id="new-comment" form={@form} snap_id={@snap.id} />
+    </div>
 
     <.live_component
       :if={@live_action == :edit}
@@ -76,12 +100,40 @@ defmodule SnapidWeb.SnapLive.Show do
 
   def handle_params(%{"slug" => slug}, _, socket) do
     snap = Snaps.get_snap_by_slug!(slug)
+    comments = Snaps.list_comments(snap.id)
+    changeset = Snaps.change_comment(%Comment{})
 
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action, snap.title))
      |> assign(:og_description, snap.description)
-     |> assign(:snap, snap)}
+     |> assign(:snap, snap)
+     |> stream(:comments, comments)
+     |> assign_form(changeset)}
+  end
+
+  @impl true
+  def handle_event("add_comment", %{"comment" => comment_params}, socket) do
+    save_comment(socket, :new, comment_params)
+  end
+
+  defp save_comment(socket, :new, comment_params) do
+    comment_params =
+      comment_params
+      |> Map.put("user_id", socket.assigns.current_user.id)
+      |> Map.put("snap_id", socket.assigns.snap.id)
+
+    case Snaps.create_comment(comment_params) do
+      {:ok, comment} ->
+        {:noreply, stream_insert(socket, :comments, comment)}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign_form(socket, changeset)}
+    end
+  end
+
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    assign(socket, :form, to_form(changeset))
   end
 
   defp page_title(:show_public, title), do: title
