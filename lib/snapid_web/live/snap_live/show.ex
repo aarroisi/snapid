@@ -43,9 +43,9 @@ defmodule SnapidWeb.SnapLive.Show do
     <div
       :if={@live_action == :show_public and assigns[:current_user]}
       id={"comment-section-#{@snap.id}"}
-      class="flex flex-col w-full border-t border-brand-200 dark:border-brand-400"
+      class="flex flex-col w-full"
     >
-      <div class="mt-6 mb-2 font-semibold">Comments</div>
+      <div class="mt-8 mb-2 font-semibold">Comments</div>
       <%!-- Previous Comments --%>
       <div id="comments-container" phx-update="stream">
         <.comment :for={{dom_id, comment} <- @streams.comments} dom_id={dom_id} comment={comment} />
@@ -53,6 +53,11 @@ defmodule SnapidWeb.SnapLive.Show do
       <%!-- New Comments --%>
       <div
         id="new-comment-trigger"
+        data-reset={
+          JS.toggle_class("hidden",
+            to: ["#new-comment-trigger", "#new-comment"]
+          )
+        }
         class="border-t border-brand-200 dark:border-brand-400 pt-4 min-h-36"
       >
         <span
@@ -125,7 +130,14 @@ defmodule SnapidWeb.SnapLive.Show do
 
     case Snaps.create_comment(comment_params) do
       {:ok, comment} ->
-        {:noreply, stream_insert(socket, :comments, comment)}
+        changeset = Snaps.change_comment(%Comment{})
+
+        {:noreply,
+         socket
+         |> stream_insert(:comments, comment)
+         |> assign_form(changeset)
+         |> push_event("reset_trix_editor", %{})
+         |> push_event("reset", %{"id" => "new-comment-trigger"})}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}

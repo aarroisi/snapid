@@ -13,12 +13,15 @@ defmodule SnapidWeb.SnapLive.Comment do
       id={@dom_id}
       class="flex flex-row gap-x-2 md:gap-x-6 trix-content border-t border-brand-200 dark:border-brand-400 py-4"
     >
-      <div class="w-24 text-sm">
+      <div class="flex flex-col w-24 !min-w-24 font-extralight">
         <% {date, time} = Snapid.Util.date_string(@comment.inserted_at, "Asia/Jakarta") %>
         <div><%= date %></div>
         <div><%= time %></div>
       </div>
-      <div><%= raw(@comment.body) %></div>
+      <div class="flex flex-col">
+        <div class="font-semibold"><%= @comment.user["fullname"] %></div>
+        <div><%= raw(@comment.body) %></div>
+      </div>
     </div>
     """
   end
@@ -46,13 +49,12 @@ defmodule SnapidWeb.SnapLive.Comment do
         >
           <trix-toolbar id="trix-toolbar-1"></trix-toolbar>
         </div>
-        <div
-          id="trix-editor-wrapper"
-          class="mt-1 border border-brand-200 dark:border-brand-400"
-          phx-update="ignore"
-        >
+        <div id="trix-editor-wrapper" class="!mt-1 border border-brand-200 dark:border-brand-400">
           <trix-editor
+            id="editor-comment"
             toolbar="trix-toolbar-1"
+            phx-update="ignore"
+            phx-hook="TrixEditor"
             autofocus
             input="comment-content"
             class="!mx-0 !my-1 border-0 px-4 !py-2 trix-content"

@@ -185,13 +185,27 @@ defmodule Snapid.Snaps do
     last_id = Map.get(params, :last_id)
     parent_comment_id = Map.get(params, :parent_comment_id)
 
-    comment_base_filter(snap_id)
-    |> order_by([c], desc: c.inserted_at)
-    |> limit([c], ^page_size)
-    |> maybe_filter_by_id(last_id)
-    |> maybe_filter_by(:parent_comment_id, parent_comment_id)
-    |> Repo.all()
-    |> Enum.reverse()
+    comments =
+      comment_base_filter(snap_id)
+      |> order_by([c], desc: c.inserted_at)
+      |> limit([c], ^page_size)
+      |> maybe_filter_by_id(last_id)
+      |> maybe_filter_by(:parent_comment_id, parent_comment_id)
+      |> Repo.all()
+      |> Enum.reverse()
+
+    user_ids =
+      comments
+      |> Enum.map(fn comment -> comment.user_id end)
+      |> Enum.uniq()
+
+    users = Snapid.Auth.get_users_by_ids(user_ids)["data"]
+
+    comments
+    |> Enum.map(fn comment ->
+      user = Enum.find(users, fn user -> user["id"] == comment.user_id end)
+      comment |> Map.put(:user, user)
+    end)
   end
 
   defp maybe_filter_by_id(query, last_id) do
@@ -215,6 +229,14 @@ defmodule Snapid.Snaps do
     %Comment{}
     |> Comment.changeset(attrs)
     |> Repo.insert()
+    |> case do
+      {:ok, comment} ->
+        user = Snapid.Auth.get_user_by_id(comment.user_id)["data"]
+        {:ok, Map.put(comment, :user, user)}
+
+      {:error, error} ->
+        {:error, error}
+    end
   end
 
   def update_comment(%Comment{} = snap, attrs) do

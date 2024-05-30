@@ -38,6 +38,17 @@ let liveSocket = new LiveSocket("/live", Socket, {
   },
   hooks: {
     TrixHooks: TrixHooks,
+    TrixEditor: {
+      mounted() {
+        this.handleEvent("reset_trix_editor", () => {
+          this.resetEditor();
+        });
+      },
+
+      resetEditor() {
+        this.el.editor.loadHTML("");
+      },
+    },
   },
 });
 
@@ -58,6 +69,15 @@ window.addEventListener("phx:close-modal", (e) => {
   elements.forEach((el) => {
     if (el.id == e.detail.id) {
       liveSocket.execJS(el, el.getAttribute("data-cancel"));
+    }
+  });
+});
+window.addEventListener("phx:reset", (e) => {
+  elements = document.querySelectorAll(`[data-reset]`);
+  elements.forEach((el) => {
+    if (el.id == e.detail.id) {
+      const command = el.getAttribute("data-reset");
+      liveSocket.execJS(el, command);
     }
   });
 });
