@@ -41,7 +41,12 @@ defmodule SnapidWeb.SnapLive.Index do
       row_click={fn {_id, snap} -> JS.navigate(~p"/snaps/#{snap}") end}
     >
       <:col :let={{_id, snap}} label="Title"><%= snap.title %></:col>
-      <:col :let={{_id, snap}} label="Created"><%= snap.inserted_at |> Timex.from_now() %></:col>
+      <:col :let={{_id, snap}} label="Created">
+        <span class="dark:text-white"><%= snap.inserted_at |> Timex.from_now() %></span>
+      </:col>
+      <:col :let={{_id, snap}} label="Comments" label_class="!text-center">
+        <div class="text-center dark:text-white"><%= Snaps.total_comments_count(snap.id) %></div>
+      </:col>
       <:col :let={{_id, snap}} label_class="!text-center">
         <%= is_published_icon(%{snap: snap}) %>
       </:col>

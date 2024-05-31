@@ -8,7 +8,10 @@ defmodule SnapidWeb.SnapLive.CommentThread do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="!w-full flex flex-col md:flex-row flex-1 gap-x-2 md:gap-x-6 trix-content border-b border-brand-200 dark:border-brand-400 py-4">
+    <div
+      id={@id}
+      class="!w-full flex flex-col md:flex-row flex-1 gap-x-2 md:gap-x-6 trix-content border-b border-brand-200 dark:border-brand-400 py-4"
+    >
       <div class="flex text-xs sm:text-sm md:text-base flex-row md:flex-col gap-x-2 w-20 !min-w-20 !max-w-20 font-extralight !leading-3 md:!leading-normal !mb-1">
         <% {date, time} = Snapid.Util.date_string(@comment.inserted_at, "Asia/Jakarta") %>
         <div><%= date %></div>

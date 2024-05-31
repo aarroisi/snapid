@@ -54,7 +54,7 @@ defmodule SnapidWeb.SnapLive.Show do
         <%!-- Previous Comments --%>
         <div
           :if={@loaded_comments_number < @total_comments_count}
-          class="flex text-xs sm:text-sm md:text-base items-center align-midde w-full h-16 rounded bg-primary-50 dark:bg-brand-600 mb-2"
+          class="flex text-xs sm:text-sm md:text-base items-center align-midde w-full h-16 rounded-md bg-primary-50 dark:bg-brand-700 mt-4"
         >
           <span phx-click="load_more" class="mx-auto text-center cursor-pointer ">
             See previous comments (<%= (@total_comments_count - @loaded_comments_number) |> min(25) %>)
