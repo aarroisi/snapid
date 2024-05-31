@@ -57,7 +57,8 @@ defmodule SnapidWeb.SnapLive.Show do
           class="flex text-xs sm:text-sm md:text-base items-center align-midde w-full h-16 rounded-md bg-primary-50 dark:bg-brand-700 mt-4"
         >
           <span phx-click="load_more" class="mx-auto text-center cursor-pointer ">
-            See previous comments (<%= (@total_comments_count - @loaded_comments_number) |> min(25) %>)
+            See previous comments (<%= (@total_comments_count - @loaded_comments_number)
+            |> min(@page_size) %> of <%= @total_comments_count - @loaded_comments_number %>)
           </span>
         </div>
         <div id="comments-container" class="flex !w-full flex-col" phx-update="stream">
@@ -106,7 +107,7 @@ defmodule SnapidWeb.SnapLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok, socket |> assign(:page_size, 25)}
   end
 
   @impl true
@@ -123,7 +124,7 @@ defmodule SnapidWeb.SnapLive.Show do
   def handle_params(%{"slug" => slug}, _, socket) do
     snap = Snaps.get_snap_by_slug!(slug)
     total_comments_count = Snaps.total_comments_count(snap.id) || 0
-    comments = Snaps.list_comments(snap.id)
+    comments = Snaps.list_comments(snap.id, %{page_size: socket.assigns.page_size})
 
     last_id =
       if length(comments) > 0 do
@@ -169,7 +170,10 @@ defmodule SnapidWeb.SnapLive.Show do
   def handle_event("load_more", _params, socket) do
     snap = socket.assigns.snap
     last_id = socket.assigns.last_id
-    comments = Snaps.list_comments(snap.id, %{last_id: last_id})
+
+    comments =
+      Snaps.list_comments(snap.id, %{last_id: last_id, page_size: socket.assigns.page_size})
+
     loaded_comments_number = socket.assigns.loaded_comments_number
 
     last_id =
