@@ -30,7 +30,7 @@ defmodule SnapidWeb.SnapLive.CommentThread do
         </div>
         <div
           :if={@reply_count > 0 and not @is_replys_loaded}
-          class="flex text-xs !my-2 sm:text-sm md:text-base items-center align-midde !w-full h-12 rounded bg-primary-50 dark:bg-brand-700 mb-2"
+          class="flex text-xs !mt-2 sm:text-sm md:text-base items-center align-midde !w-full h-12 rounded bg-primary-50 dark:bg-brand-700 mb-2"
         >
           <span
             phx-click="load_replies"
@@ -40,9 +40,12 @@ defmodule SnapidWeb.SnapLive.CommentThread do
             See replies (<%= @reply_count %>)
           </span>
         </div>
-        <div class="flex justify-start text-gray-400 !w-full !mt-1">
+        <div
+          :if={@reply_count == 0 or @is_replys_loaded}
+          class="flex justify-start text-gray-400 !w-full !mt-1"
+        >
           <span
-            :if={@add_comment_reply and (@reply_count == 0 or @is_replys_loaded)}
+            :if={@add_comment_reply}
             class="cursor-pointer text-xs sm:text-sm md:text-base"
             phx-click="reply"
             phx-target={@myself}

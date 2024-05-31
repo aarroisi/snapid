@@ -12,7 +12,7 @@ defmodule SnapidWeb.SnapLive.Comment do
 
   def new_comment(assigns) do
     ~H"""
-    <div id={@id} class={"flex py-4 !w-full min-h-28 #{@class}"}>
+    <div id={@id} class={"flex py-4 !w-full #{@class}"}>
       <.simple_form
         for={@form}
         id={"comment-#{@id}"}
