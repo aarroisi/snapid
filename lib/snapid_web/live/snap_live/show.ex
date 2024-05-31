@@ -3,6 +3,7 @@ defmodule SnapidWeb.SnapLive.Show do
   alias Snapid.Snaps
   alias SnapidWeb.Endpoint
   alias Snapid.Snaps.Comment
+  alias SnapidWeb.SnapLive.CommentThread
   import SnapidWeb.SnapLive.Comment
 
   @impl true
@@ -56,8 +57,16 @@ defmodule SnapidWeb.SnapLive.Show do
           See previous comments (<%= (@total_comments_count - @loaded_comments_number) |> min(25) %>)
         </span>
       </div>
-      <div id="comments-container" phx-update="stream">
-        <.comment :for={{dom_id, comment} <- @streams.comments} dom_id={dom_id} comment={comment} />
+      <div id="comments-container" class="flex !w-full flex-col" phx-update="stream">
+        <.live_component
+          :for={{dom_id, comment} <- @streams.comments}
+          id={dom_id}
+          module={CommentThread}
+          current_user={@current_user}
+          comment={comment}
+          snap={@snap}
+          }
+        />
       </div>
       <%!-- New Comments --%>
       <div
@@ -174,12 +183,23 @@ defmodule SnapidWeb.SnapLive.Show do
 
     {:noreply,
      socket
-     |> stream_insert(:comments, comment)
+     |> stream_insert(:comments, comment, at: 0)
      |> assign(:total_comments_count, total_comments_count + 1)
      |> assign(:loaded_comments_number, loaded_comments_number + 1)}
   end
 
-  defp save_comment(socket, :new, comment_params) do
+  def handle_info(%{event: "new_reply", payload: %{comment: comment}}, socket) do
+    if not is_nil(comment.parent_comment_id) do
+      send_update(CommentThread,
+        id: "comments-#{comment.parent_comment_id}",
+        reply: comment
+      )
+    end
+
+    {:noreply, socket}
+  end
+
+  def save_comment(socket, :new, comment_params) do
     comment_params =
       comment_params
       |> Map.put("user_id", socket.assigns.current_user.id)

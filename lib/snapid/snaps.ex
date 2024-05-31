@@ -31,12 +31,19 @@ defmodule Snapid.Snaps do
     |> Repo.all()
   end
 
-  defp maybe_filter_by(query, key, value) do
+  defp maybe_filter_by(query, key, value, opts \\ []) do
+    literal_nil = Keyword.get(opts, :literal_nil, false)
+
     if not is_nil(value) do
       query
       |> where([s], field(s, ^key) == ^value)
     else
-      query
+      if literal_nil do
+        query
+        |> where([s], field(s, ^key) |> is_nil())
+      else
+        query
+      end
     end
   end
 
@@ -191,7 +198,7 @@ defmodule Snapid.Snaps do
       |> order_by([c], desc: c.inserted_at)
       |> limit([c], ^page_size)
       |> maybe_filter_by_id(last_id)
-      |> maybe_filter_by(:parent_comment_id, parent_comment_id)
+      |> maybe_filter_by(:parent_comment_id, parent_comment_id, literal_nil: true)
       |> Repo.all()
       |> Enum.reverse()
 
@@ -209,8 +216,9 @@ defmodule Snapid.Snaps do
     end)
   end
 
-  def total_comments_count(snap_id) do
+  def total_comments_count(snap_id, parent_comment_id \\ nil) do
     comment_base_filter(snap_id)
+    |> maybe_filter_by(:parent_comment_id, parent_comment_id, literal_nil: true)
     |> select([c], count(c))
     |> Repo.one()
   end
@@ -257,7 +265,12 @@ defmodule Snapid.Snaps do
   end
 
   def publish_comment_created({:ok, comment} = result) do
-    Endpoint.broadcast("snap:#{comment.snap_id}", "new_comment", %{comment: comment})
+    if not is_nil(comment.parent_comment_id) do
+      Endpoint.broadcast("comment:#{comment.parent_comment_id}", "new_reply", %{comment: comment})
+    else
+      Endpoint.broadcast("snap:#{comment.snap_id}", "new_comment", %{comment: comment})
+    end
+
     result
   end
 
