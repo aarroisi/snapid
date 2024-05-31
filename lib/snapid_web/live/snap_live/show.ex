@@ -57,7 +57,11 @@ defmodule SnapidWeb.SnapLive.Show do
           See previous comments (<%= (@total_comments_count - @loaded_comments_number) |> min(25) %>)
         </span>
       </div>
-      <div id="comments-container" class="flex !w-full flex-col" phx-update="stream">
+      <div
+        id="comments-container"
+        class="flex !w-full flex-col border-y border-brand-200 dark:border-brand-400"
+        phx-update="stream"
+      >
         <.live_component
           :for={{dom_id, comment} <- @streams.comments}
           id={dom_id}
@@ -69,12 +73,12 @@ defmodule SnapidWeb.SnapLive.Show do
         />
       </div>
       <%!-- New Comments --%>
-      <div
-        :if={not @add_comment}
-        id="new-comment-trigger"
-        class="border-t border-brand-200 dark:border-brand-400 pt-4 min-h-48"
-      >
-        <span phx-click="show_add_comment" class="cursor-pointer text-gray-400">
+      <div :if={not @add_comment} id="new-comment-trigger" class="pt-4 min-h-48">
+        <span
+          phx-click="show_add_comment"
+          phx-value-id="editor-comment-new-comment"
+          class="cursor-pointer text-gray-400"
+        >
           Add a comment here...
         </span>
       </div>
@@ -146,10 +150,10 @@ defmodule SnapidWeb.SnapLive.Show do
     save_comment(socket, :new, comment_params)
   end
 
-  def handle_event("show_add_comment", _params, socket) do
+  def handle_event("show_add_comment", %{"id" => id}, socket) do
     {:noreply,
      assign(socket, :add_comment, true)
-     |> push_event("scroll_to_view", %{"id" => "editor-comment"})}
+     |> push_event("scroll_to_view", %{"id" => id})}
   end
 
   def handle_event("cancel_add_comment", _params, socket) do
