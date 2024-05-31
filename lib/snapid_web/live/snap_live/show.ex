@@ -59,7 +59,7 @@ defmodule SnapidWeb.SnapLive.Show do
       </div>
       <div
         id="comments-container"
-        class="flex !w-full flex-col border-y border-brand-200 dark:border-brand-400"
+        class="flex !w-full flex-col border-b border-brand-200 dark:border-brand-400"
         phx-update="stream"
       >
         <.live_component

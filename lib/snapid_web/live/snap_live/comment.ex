@@ -51,7 +51,7 @@ defmodule SnapidWeb.SnapLive.Comment do
           >
           </trix-editor>
         </div>
-        <div class="flex justify-between mt-4">
+        <div class="flex justify-between !mt-2">
           <.button
             class="!bg-secondary-500 hover:!bg-secondary-600 text-sm !py-1 !px-2"
             type="button"

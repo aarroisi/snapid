@@ -209,9 +209,17 @@ defmodule Snapid.Snaps do
 
     users = if length(user_ids) > 0, do: Snapid.Auth.get_users_by_ids(user_ids)["data"], else: []
 
+    IO.inspect(users)
+
     comments
     |> Enum.map(fn comment ->
-      user = Enum.find(users, fn user -> user["id"] == comment.user_id end)
+      user =
+        Enum.find(users, fn user ->
+          IO.inspect(user)
+
+          user["id"] == comment.user_id
+        end)
+
       comment |> Map.put(:user, user)
     end)
   end
@@ -265,11 +273,14 @@ defmodule Snapid.Snaps do
   end
 
   def publish_comment_created({:ok, comment} = result) do
-    if not is_nil(comment.parent_comment_id) do
-      Endpoint.broadcast("comment:#{comment.parent_comment_id}", "new_reply", %{comment: comment})
-    else
-      Endpoint.broadcast("snap:#{comment.snap_id}", "new_comment", %{comment: comment})
-    end
+    event =
+      if not is_nil(comment.parent_comment_id) do
+        "new_reply"
+      else
+        "new_comment"
+      end
+
+    Endpoint.broadcast("snap:#{comment.snap_id}", event, %{comment: comment})
 
     result
   end

@@ -2,7 +2,6 @@ defmodule SnapidWeb.SnapLive.CommentThread do
   use SnapidWeb, :live_component
   alias Snapid.Snaps
   alias Snapid.Snaps.Comment
-  alias SnapidWeb.Endpoint
   alias SnapidWeb.SnapLive.Show
   import SnapidWeb.SnapLive.Comment
 
@@ -10,7 +9,7 @@ defmodule SnapidWeb.SnapLive.CommentThread do
   def render(assigns) do
     ~H"""
     <div class="!w-full flex flex-col md:flex-row flex-1 gap-x-2 md:gap-x-6 trix-content border-t border-brand-200 dark:border-brand-400 py-4">
-      <div class="flex text-xs sm:text-sm md:text-base flex-row md:flex-col gap-x-2 w-20 !min-w-20 !max-w-20 font-extralight">
+      <div class="flex text-xs sm:text-sm md:text-base flex-row md:flex-col gap-x-2 w-20 !min-w-20 !max-w-20 font-extralight !leading-3 md:!leading-normal !mb-1">
         <% {date, time} = Snapid.Util.date_string(@comment.inserted_at, "Asia/Jakarta") %>
         <div><%= date %></div>
         <div><%= time %></div>
@@ -18,18 +17,18 @@ defmodule SnapidWeb.SnapLive.CommentThread do
       <div class="flex-grow gap-y-2 md:gap-y-1 min-w-0">
         <div class="font-semibold !pb-1"><%= @comment.user["fullname"] %></div>
         <div><%= raw(@comment.body) %></div>
-        <div id={"reply-container-#{@comment.id}"} class="!mt-4 gap-y-4" phx-update="stream">
+        <div id={"reply-container-#{@comment.id}"} class="!pt-4 !space-y-2" phx-update="stream">
           <.reply :for={{dom_id, reply} <- @streams.replys} id={dom_id} comment={reply} />
         </div>
-        <div class="flex justify-end text-gray-400 !w-full">
+        <div class="flex justify-start text-gray-400 !w-full !mt-1">
           <span
             :if={@add_comment_reply}
-            class="cursor-pointer"
+            class="cursor-pointer text-xs sm:text-sm md:text-base"
             phx-click="reply"
             phx-target={@myself}
             phx-value-comment_id={@comment.id}
           >
-            Add a reply
+            Reply
           </span>
 
           <.new_comment
@@ -50,14 +49,14 @@ defmodule SnapidWeb.SnapLive.CommentThread do
 
   def reply(assigns) do
     ~H"""
-    <div class="bg-gray-50 !p-4 !w-full flex flex-col gap-x-2 md:gap-x-6 trix-content border-t border-brand-200 dark:border-brand-400 py-4">
-      <div class="flex text-xs sm:text-sm md:text-base flex-row gap-x-2 w-20 !min-w-20 !max-w-20 font-extralight leading-4">
+    <div class="rounded-md bg-gray-50 dark:bg-brand-700 !p-4 !w-full flex flex-col gap-x-2 md:gap-x-6 trix-content py-4">
+      <div class="flex text-xs sm:text-sm md:text-base flex-row gap-x-2 w-20 !min-w-20 !max-w-20 font-extralight !leading-3 !mb-1">
         <% {date, time} = Snapid.Util.date_string(@comment.inserted_at, "Asia/Jakarta") %>
         <div><%= date %></div>
         <div><%= time %></div>
       </div>
+      <div class="font-semibold !pb-1"><%= @comment.user["fullname"] %></div>
       <div class="flex-grow gap-y-2 md:gap-y-1 min-w-0">
-        <div class="font-semibold !pb-1"><%= @comment.user["fullname"] %></div>
         <div><%= raw(@comment.body) %></div>
       </div>
     </div>
@@ -83,8 +82,6 @@ defmodule SnapidWeb.SnapLive.CommentThread do
       if not socket.assigns.is_init do
         changeset = Snaps.change_comment(%Comment{})
         replys = Snaps.list_comments(assigns.snap.id, %{parent_comment_id: assigns.comment.id})
-
-        Endpoint.subscribe("comment:#{assigns.comment.id}")
 
         socket
         |> assign_form(changeset)
