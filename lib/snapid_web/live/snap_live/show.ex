@@ -43,46 +43,52 @@ defmodule SnapidWeb.SnapLive.Show do
     <% end %>
 
     <div
-      :if={@live_action == :show_public and assigns[:current_user]}
+      :if={@live_action == :show_public}
       id={"comment-section-#{@snap.id}"}
       class="flex flex-col w-full"
     >
-      <div class="mt-8 mb-2 font-semibold">Comments (<%= @total_comments_count %>)</div>
-      <%!-- Previous Comments --%>
-      <div
-        :if={@loaded_comments_number < @total_comments_count}
-        class="flex text-xs sm:text-sm md:text-base items-center align-midde w-full h-16 rounded bg-primary-50 dark:bg-brand-600 mb-2"
-      >
-        <span phx-click="load_more" class="mx-auto text-center cursor-pointer ">
-          See previous comments (<%= (@total_comments_count - @loaded_comments_number) |> min(25) %>)
-        </span>
+      <div class="mt-8 pb-2 font-semibold border-b border-brand-200 dark:border-brand-400">
+        Comments (<%= @total_comments_count %>)
       </div>
-      <div
-        id="comments-container"
-        class="flex !w-full flex-col border-b border-brand-200 dark:border-brand-400"
-        phx-update="stream"
-      >
-        <.live_component
-          :for={{dom_id, comment} <- @streams.comments}
-          id={dom_id}
-          module={CommentThread}
-          current_user={@current_user}
-          comment={comment}
-          snap={@snap}
-          }
-        />
-      </div>
-      <%!-- New Comments --%>
-      <div :if={not @add_comment} id="new-comment-trigger" class="pt-4 min-h-48">
-        <span
-          phx-click="show_add_comment"
-          phx-value-id="editor-comment-new-comment"
-          class="cursor-pointer text-gray-400"
+      <%= if assigns[:current_user] do %>
+        <%!-- Previous Comments --%>
+        <div
+          :if={@loaded_comments_number < @total_comments_count}
+          class="flex text-xs sm:text-sm md:text-base items-center align-midde w-full h-16 rounded bg-primary-50 dark:bg-brand-600 mb-2"
         >
-          Add a comment here...
-        </span>
-      </div>
-      <.new_comment :if={@add_comment} id="new-comment" form={@form} snap_id={@snap.id} />
+          <span phx-click="load_more" class="mx-auto text-center cursor-pointer ">
+            See previous comments (<%= (@total_comments_count - @loaded_comments_number) |> min(25) %>)
+          </span>
+        </div>
+        <div id="comments-container" class="flex !w-full flex-col" phx-update="stream">
+          <.live_component
+            :for={{dom_id, comment} <- @streams.comments}
+            id={dom_id}
+            module={CommentThread}
+            current_user={@current_user}
+            comment={comment}
+            snap={@snap}
+            }
+          />
+        </div>
+        <%!-- New Comments --%>
+        <div :if={not @add_comment} id="new-comment-trigger" class="pt-4 min-h-48">
+          <span
+            phx-click="show_add_comment"
+            phx-value-id="editor-comment-new-comment"
+            class="cursor-pointer text-gray-400"
+          >
+            Add a comment here...
+          </span>
+        </div>
+        <.new_comment :if={@add_comment} id="new-comment" form={@form} snap_id={@snap.id} />
+      <% end %>
+    </div>
+
+    <div :if={assigns[:current_user] |> is_nil()} class="pt-4 min-h-48">
+      <span phx-click="login" class="cursor-pointer text-gray-400">
+        Login to see comments
+      </span>
     </div>
 
     <.live_component
@@ -178,6 +184,10 @@ defmodule SnapidWeb.SnapLive.Show do
      |> assign(:last_id, last_id)
      |> assign(:loaded_comments_number, loaded_comments_number + Enum.count(comments))
      |> stream(:comments, Enum.reverse(comments), at: 0)}
+  end
+
+  def handle_event("login", _params, socket) do
+    {:noreply, push_navigate(socket, to: ~p"/users/log_in")}
   end
 
   @impl true

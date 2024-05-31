@@ -209,14 +209,10 @@ defmodule Snapid.Snaps do
 
     users = if length(user_ids) > 0, do: Snapid.Auth.get_users_by_ids(user_ids)["data"], else: []
 
-    IO.inspect(users)
-
     comments
     |> Enum.map(fn comment ->
       user =
         Enum.find(users, fn user ->
-          IO.inspect(user)
-
           user["id"] == comment.user_id
         end)
 

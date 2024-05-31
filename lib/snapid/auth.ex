@@ -19,7 +19,7 @@ defmodule Snapid.Auth do
     ids = ids |> Enum.join(",")
     url = get_base_url() <> "/api/users/bulk/#{ids}"
     headers = [{"Authorization", "Bearer #{token}"}]
-    response = Req.get!(url, headers: headers) |> IO.inspect()
+    response = Req.get!(url, headers: headers)
     response.body
   end
 
