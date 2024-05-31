@@ -46,8 +46,16 @@ defmodule SnapidWeb.SnapLive.Show do
       id={"comment-section-#{@snap.id}"}
       class="flex flex-col w-full"
     >
-      <div class="mt-8 mb-2 font-semibold">Comments</div>
+      <div class="mt-8 mb-2 font-semibold">Comments (<%= @total_comments_count %>)</div>
       <%!-- Previous Comments --%>
+      <div
+        :if={@loaded_comments_number < @total_comments_count}
+        class="flex text-xs sm:text-sm md:text-base items-center align-midde w-full h-16 rounded bg-primary-50 dark:bg-brand-600 mb-2"
+      >
+        <span phx-click="load_more" class="mx-auto text-center cursor-pointer ">
+          See previous comments (<%= (@total_comments_count - @loaded_comments_number) |> min(25) %>)
+        </span>
+      </div>
       <div id="comments-container" phx-update="stream">
         <.comment :for={{dom_id, comment} <- @streams.comments} dom_id={dom_id} comment={comment} />
       </div>
@@ -95,7 +103,16 @@ defmodule SnapidWeb.SnapLive.Show do
 
   def handle_params(%{"slug" => slug}, _, socket) do
     snap = Snaps.get_snap_by_slug!(slug)
+    total_comments_count = Snaps.total_comments_count(snap.id) || 0
     comments = Snaps.list_comments(snap.id)
+
+    last_id =
+      if length(comments) > 0 do
+        Enum.at(comments, 0).id
+      else
+        0
+      end
+
     changeset = Snaps.change_comment(%Comment{})
 
     if connected?(socket) do
@@ -108,6 +125,9 @@ defmodule SnapidWeb.SnapLive.Show do
      |> assign(:og_description, snap.description)
      |> assign(:snap, snap)
      |> assign(:add_comment, false)
+     |> assign(:last_id, last_id)
+     |> assign(:total_comments_count, total_comments_count)
+     |> assign(:loaded_comments_number, Enum.count(comments))
      |> stream(:comments, comments)
      |> assign_form(changeset)}
   end
@@ -127,9 +147,36 @@ defmodule SnapidWeb.SnapLive.Show do
     {:noreply, assign(socket, :add_comment, false)}
   end
 
+  def handle_event("load_more", _params, socket) do
+    snap = socket.assigns.snap
+    last_id = socket.assigns.last_id
+    comments = Snaps.list_comments(snap.id, %{last_id: last_id})
+    loaded_comments_number = socket.assigns.loaded_comments_number
+
+    last_id =
+      if length(comments) > 0 do
+        Enum.at(comments, 0).id
+      else
+        0
+      end
+
+    {:noreply,
+     socket
+     |> assign(:last_id, last_id)
+     |> assign(:loaded_comments_number, loaded_comments_number + Enum.count(comments))
+     |> stream(:comments, Enum.reverse(comments), at: 0)}
+  end
+
   @impl true
   def handle_info(%{event: "new_comment", payload: %{comment: comment}}, socket) do
-    {:noreply, stream_insert(socket, :comments, comment)}
+    total_comments_count = socket.assigns.total_comments_count
+    loaded_comments_number = socket.assigns.loaded_comments_number
+
+    {:noreply,
+     socket
+     |> stream_insert(:comments, comment)
+     |> assign(:total_comments_count, total_comments_count + 1)
+     |> assign(:loaded_comments_number, loaded_comments_number + 1)}
   end
 
   defp save_comment(socket, :new, comment_params) do
@@ -139,7 +186,7 @@ defmodule SnapidWeb.SnapLive.Show do
       |> Map.put("snap_id", socket.assigns.snap.id)
 
     case Snaps.create_comment(comment_params) do
-      {:ok, comment} ->
+      {:ok, _} ->
         changeset = Snaps.change_comment(%Comment{})
 
         {:noreply,

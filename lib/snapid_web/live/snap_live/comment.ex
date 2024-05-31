@@ -60,7 +60,7 @@ defmodule SnapidWeb.SnapLive.Comment do
             toolbar="trix-toolbar-1"
             autofocus
             input="comment-content"
-            class="!mx-0 !my-1 border-0 px-4 !py-2 trix-content"
+            class="!mx-0 !my-1 border-0 !px-2 !py-1 trix-content"
             placeholder="Write your comment here.."
           >
           </trix-editor>

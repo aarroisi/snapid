@@ -200,13 +200,19 @@ defmodule Snapid.Snaps do
       |> Enum.map(fn comment -> comment.user_id end)
       |> Enum.uniq()
 
-    users = Snapid.Auth.get_users_by_ids(user_ids)["data"]
+    users = if length(user_ids) > 0, do: Snapid.Auth.get_users_by_ids(user_ids)["data"], else: []
 
     comments
     |> Enum.map(fn comment ->
       user = Enum.find(users, fn user -> user["id"] == comment.user_id end)
       comment |> Map.put(:user, user)
     end)
+  end
+
+  def total_comments_count(snap_id) do
+    comment_base_filter(snap_id)
+    |> select([c], count(c))
+    |> Repo.one()
   end
 
   defp maybe_filter_by_id(query, last_id) do
