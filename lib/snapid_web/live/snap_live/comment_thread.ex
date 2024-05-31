@@ -17,20 +17,20 @@ defmodule SnapidWeb.SnapLive.CommentThread do
         <div><%= date %></div>
         <div><%= time %></div>
       </div>
-      <div class="flex-grow gap-y-2 md:gap-y-1 min-w-0">
-        <div class="font-semibold !pb-1"><%= @comment.user["fullname"] %></div>
+      <div class="flex flex-col flex-grow gap-y-2 md:gap-y-1 min-w-0">
+        <div class="font-semibold"><%= @comment.user["fullname"] %></div>
         <div><%= raw(@comment.body) %></div>
         <div
           :if={@reply_count > 0 and @is_replys_loaded}
           id={"reply-container-#{@comment.id}"}
-          class="!pt-4 !space-y-2"
+          class="!pt-2 !space-y-2"
           phx-update="stream"
         >
           <.reply :for={{dom_id, reply} <- @streams.replys} id={dom_id} comment={reply} />
         </div>
         <div
           :if={@reply_count > 0 and not @is_replys_loaded}
-          class="flex text-xs !mt-4 sm:text-sm md:text-base items-center align-midde !w-full h-12 rounded bg-gray-50 dark:bg-brand-700 mb-2"
+          class="flex text-xs !my-2 sm:text-sm md:text-base items-center align-midde !w-full h-12 rounded bg-primary-50 dark:bg-brand-700 mb-2"
         >
           <span
             phx-click="load_replies"
@@ -69,7 +69,7 @@ defmodule SnapidWeb.SnapLive.CommentThread do
 
   def reply(assigns) do
     ~H"""
-    <div class="rounded-md bg-gray-50 dark:bg-brand-700 !p-4 !w-full flex flex-col gap-x-2 md:gap-x-6 trix-content py-4">
+    <div class="rounded-md bg-primary-50 dark:bg-brand-700 !p-4 !w-full flex flex-col gap-x-2 md:gap-x-6 trix-content py-4">
       <div class="flex text-xs sm:text-sm md:text-base flex-row gap-x-2 w-20 !min-w-20 !max-w-20 font-extralight !leading-3 !mb-1">
         <% {date, time} = Snapid.Util.date_string(@comment.inserted_at, "Asia/Jakarta") %>
         <div><%= date %></div>
@@ -93,6 +93,8 @@ defmodule SnapidWeb.SnapLive.CommentThread do
     {:ok,
      socket
      |> assign(:add_comment_reply, true)
+     |> assign(:reply_count, socket.assigns.reply_count + 1)
+     |> assign(:is_replys_loaded, true)
      |> stream_insert(:replys, reply)}
   end
 

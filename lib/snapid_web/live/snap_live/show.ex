@@ -197,7 +197,7 @@ defmodule SnapidWeb.SnapLive.Show do
 
     {:noreply,
      socket
-     |> stream_insert(:comments, comment, at: 0)
+     |> stream_insert(:comments, comment)
      |> assign(:total_comments_count, total_comments_count + 1)
      |> assign(:loaded_comments_number, loaded_comments_number + 1)}
   end
