@@ -75,7 +75,11 @@ defmodule SnapidWeb.SnapLive.Index do
         <.simple_form for={@form} id="configure-snap" phx-submit="save_snap">
           <.input wrapper_class="hidden" type="text" field={@form[:id]} />
           <.input_overlap label="Title" field={@form[:title]} />
-          <.input_with_addon label="Slug" field={@form[:slug]} addon="snapid.fly.dev/p/" />
+          <.input_with_addon
+            label="Slug"
+            field={@form[:slug]}
+            addon={"#{Application.get_env(:snapid, SnapidWeb.Endpoint)[:url][:host]}/p/"}
+          />
           <.textarea_overlap label="Description" field={@form[:description]} />
           <div class="mt-2 flex justify-end">
             <button
