@@ -4,8 +4,8 @@ defmodule Snapid.Repo.Migrations.AddComment do
   def change do
     create table(:comments) do
       add :body, :text
-      add :user_id, :bigint
-      add :snap_id, references(:threads, on_delete: :delete_all), null: false
+      add :user_id, references(:users, on_delete: :delete_all), null: false
+      add :snap_id, references(:snaps, on_delete: :delete_all), null: false
       add :parent_comment_id, references(:comments, on_delete: :nothing)
 
       timestamps(type: :utc_datetime)

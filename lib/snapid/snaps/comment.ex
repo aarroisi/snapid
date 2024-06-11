@@ -9,8 +9,7 @@ defmodule Snapid.Snaps.Comment do
 
   schema "comments" do
     field :body, :string
-    field :user_id, :integer
-    field :user, :map, virtual: true
+    belongs_to :user, Snapid.Accounts.User
     belongs_to :snap, Snap
     belongs_to :parent_comment, __MODULE__
     timestamps(type: :utc_datetime)

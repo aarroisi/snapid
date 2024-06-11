@@ -58,8 +58,7 @@ defmodule SnapidWeb.Router do
   scope "/", SnapidWeb do
     pipe_through [:browser, :require_authenticated_user]
 
-    get "/", ThreadController, :home
-    get "/threads", ThreadController, :home
+    get "/", SnapController, :home
 
     post "/trix-uploads", TrixUploadsController, :create
     delete "/trix-uploads", TrixUploadsController, :delete
@@ -84,6 +83,8 @@ defmodule SnapidWeb.Router do
     live_session :current_user,
       on_mount: [{SnapidWeb.UserAuth, :mount_current_user}] do
       live "/p/:slug", SnapLive.Show, :show_public
+      live "/users/confirm/:token", UserConfirmationLive, :edit
+      live "/users/confirm", UserConfirmationInstructionsLive, :new
     end
   end
 end

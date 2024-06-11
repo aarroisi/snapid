@@ -3,7 +3,8 @@ defmodule SnapidWeb.SnapLive.Show do
   alias Snapid.Snaps
   alias SnapidWeb.Endpoint
   alias Snapid.Snaps.Comment
-  alias SnapidWeb.SnapLive.CommentThread
+  alias SnapidWeb.SnapLive.CommentSnap
+  alias Snapid.Repo
   import SnapidWeb.SnapLive.Comment
 
   @impl true
@@ -20,12 +21,13 @@ defmodule SnapidWeb.SnapLive.Show do
       </div>
       <hr class="hidden md:block !m-0 border-brand-200 dark:border-brand-400" />
     </div>
+
     <%= if @live_action in [:show, :show_public] do %>
       <.header class="mb-5">
         <h1 class="text-2xl md:text-3xl font-bold"><%= @snap.title %></h1>
         <p class="text-sm mt-3">
-          <%= if @snap.user["email"] do %>
-            <%= @snap.user["email"] %> ·
+          <%= if @snap.user.email do %>
+            <%= @snap.user.email %> ·
           <% end %>
           <%= Timex.format!(@snap.inserted_at, "{D} {Mshort} {YYYY}") %>
         </p>
@@ -54,9 +56,10 @@ defmodule SnapidWeb.SnapLive.Show do
         <%!-- Previous Comments --%>
         <div
           :if={@loaded_comments_number < @total_comments_count}
-          class="flex text-xs sm:text-sm md:text-base items-center align-midde w-full h-16 rounded-md bg-primary-50 dark:bg-brand-700 mt-4"
+          phx-click="load_more"
+          class="cursor-pointer flex text-xs sm:text-sm md:text-base items-center align-midde w-full h-16 rounded-md bg-primary-50 dark:bg-brand-700 mt-4"
         >
-          <span phx-click="load_more" class="mx-auto text-center cursor-pointer ">
+          <span class="mx-auto text-center">
             See previous comments (<%= (@total_comments_count - @loaded_comments_number)
             |> min(@page_size) %> of <%= @total_comments_count - @loaded_comments_number %>)
           </span>
@@ -65,7 +68,7 @@ defmodule SnapidWeb.SnapLive.Show do
           <.live_component
             :for={{dom_id, comment} <- @streams.comments}
             id={dom_id}
-            module={CommentThread}
+            module={CommentSnap}
             current_user={@current_user}
             comment={comment}
             snap={@snap}
@@ -73,12 +76,14 @@ defmodule SnapidWeb.SnapLive.Show do
           />
         </div>
         <%!-- New Comments --%>
-        <div :if={not @add_comment} id="new-comment-trigger" class="pt-4 min-h-48">
-          <span
-            phx-click="show_add_comment"
-            phx-value-id="editor-comment-new-comment"
-            class="cursor-pointer text-gray-400"
-          >
+        <div
+          :if={not @add_comment}
+          phx-click="show_add_comment"
+          phx-value-id="editor-comment-new-comment"
+          id="new-comment-trigger"
+          class="pt-4 min-h-48 cursor-pointer"
+        >
+          <span class="text-gray-400">
             Add a comment here...
           </span>
         </div>
@@ -112,7 +117,7 @@ defmodule SnapidWeb.SnapLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    snap = Snaps.get_snap!(id)
+    snap = Snaps.get_snap!(id) |> Repo.preload(:user)
 
     {:noreply,
      socket
@@ -122,7 +127,7 @@ defmodule SnapidWeb.SnapLive.Show do
   end
 
   def handle_params(%{"slug" => slug}, _, socket) do
-    snap = Snaps.get_snap_by_slug!(slug)
+    snap = Snaps.get_snap_by_slug!(slug) |> Repo.preload(:user)
     total_comments_count = Snaps.total_comments_count(snap.id) || 0
     comments = Snaps.list_comments(snap.id, %{page_size: socket.assigns.page_size})
 
@@ -208,7 +213,7 @@ defmodule SnapidWeb.SnapLive.Show do
 
   def handle_info(%{event: "new_reply", payload: %{comment: comment}}, socket) do
     if not is_nil(comment.parent_comment_id) do
-      send_update(CommentThread,
+      send_update(CommentSnap,
         id: "comments-#{comment.parent_comment_id}",
         reply: comment
       )

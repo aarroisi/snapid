@@ -1,4 +1,4 @@
-defmodule SnapidWeb.SnapLive.CommentThread do
+defmodule SnapidWeb.SnapLive.CommentSnap do
   use SnapidWeb, :live_component
   alias Snapid.Snaps
   alias Snapid.Snaps.Comment
@@ -18,17 +18,15 @@ defmodule SnapidWeb.SnapLive.CommentThread do
         <div><%= time %></div>
       </div>
       <div class="flex flex-col flex-grow gap-y-2 md:gap-y-1 min-w-0">
-        <div class="font-semibold"><%= @comment.user["fullname"] %></div>
+        <div class="font-semibold"><%= @comment.user.email %></div>
         <div><%= raw(@comment.body) %></div>
         <div
           :if={@is_replys_loaded and @loaded_replys < @reply_count}
-          class="flex text-xs !mt-2 sm:text-sm md:text-base items-center align-midde !w-full h-12 rounded bg-primary-50 dark:bg-brand-700 mb-2"
+          phx-click="load_more_replies"
+          phx-target={@myself}
+          class="cursor-pointer flex text-xs !mt-2 sm:text-sm md:text-base items-center align-midde !w-full h-12 rounded bg-primary-50 dark:bg-brand-700 mb-2"
         >
-          <span
-            phx-click="load_more_replies"
-            phx-target={@myself}
-            class="mx-auto text-center cursor-pointer w-full"
-          >
+          <span class="mx-auto text-center w-full">
             Load more (<%= (@reply_count - @loaded_replys) |> min(@page_size) %> of <%= @reply_count -
               @loaded_replys %>)
           </span>
@@ -43,13 +41,11 @@ defmodule SnapidWeb.SnapLive.CommentThread do
         </div>
         <div
           :if={@reply_count > 0 and not @is_replys_loaded}
-          class="flex text-xs !mt-2 sm:text-sm md:text-base items-center align-midde !w-full h-12 rounded bg-primary-50 dark:bg-brand-700 mb-2"
+          phx-click="load_replies"
+          phx-target={@myself}
+          class="cursor-pointer flex text-xs !mt-2 sm:text-sm md:text-base items-center align-midde !w-full h-12 rounded bg-primary-50 dark:bg-brand-700 mb-2"
         >
-          <span
-            phx-click="load_replies"
-            phx-target={@myself}
-            class="mx-auto text-center cursor-pointer w-full"
-          >
+          <span class="mx-auto text-center w-full">
             See replies (<%= @reply_count %>)
           </span>
         </div>
@@ -94,7 +90,7 @@ defmodule SnapidWeb.SnapLive.CommentThread do
         <div><%= date %></div>
         <div><%= time %></div>
       </div>
-      <div class="font-semibold !pb-1"><%= @comment.user["fullname"] %></div>
+      <div class="font-semibold !pb-1"><%= @comment.user.email %></div>
       <div class="flex-grow gap-y-2 md:gap-y-1 min-w-0">
         <div><%= raw(@comment.body) %></div>
       </div>

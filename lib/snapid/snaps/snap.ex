@@ -3,16 +3,14 @@ defmodule Snapid.Snaps.Snap do
   alias Ecto.Changeset
   import Ecto.Changeset
 
-  schema "threads" do
+  schema "snaps" do
     field :title, :string
     field :description, :string
     field :body, :string
-    field :user_id, :integer
     field :slug, :string
     field :is_published, :boolean, default: true
 
-    field :user, :map, virtual: true
-
+    belongs_to :user, Snapid.Accounts.User
     timestamps(type: :utc_datetime)
   end
 

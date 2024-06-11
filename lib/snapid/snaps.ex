@@ -70,7 +70,6 @@ defmodule Snapid.Snaps do
     )
     |> maybe_filter_by(:user_id, user_id)
     |> Repo.one()
-    |> load_user()
   end
 
   @doc """
@@ -89,7 +88,6 @@ defmodule Snapid.Snaps do
   """
   def get_snap_by_slug!(slug) do
     Repo.get_by!(Snap, slug: slug, is_published: true)
-    |> load_user()
   end
 
   @doc """
@@ -157,28 +155,6 @@ defmodule Snapid.Snaps do
     Snap.changeset(snap, attrs)
   end
 
-  # Users
-
-  defp load_user(%Snap{} = snap) do
-    user =
-      case snap.user_id do
-        nil ->
-          %{}
-
-        _ ->
-          %{"data" => user} =
-            snap.user_id
-            |> Snapid.Auth.get_user_by_id()
-
-          user
-      end
-
-    snap
-    |> Map.put(:user, user)
-  end
-
-  defp load_user(nil), do: nil
-
   # Comments
 
   defp comment_base_filter(snap_id) when not is_nil(snap_id) do
@@ -193,31 +169,14 @@ defmodule Snapid.Snaps do
     last_id = Map.get(params, :last_id)
     parent_comment_id = Map.get(params, :parent_comment_id)
 
-    comments =
-      comment_base_filter(snap_id)
-      |> order_by([c], desc: c.inserted_at)
-      |> limit([c], ^page_size)
-      |> maybe_filter_by_id(last_id)
-      |> maybe_filter_by(:parent_comment_id, parent_comment_id, literal_nil: true)
-      |> Repo.all()
-      |> Enum.reverse()
-
-    user_ids =
-      comments
-      |> Enum.map(fn comment -> comment.user_id end)
-      |> Enum.uniq()
-
-    users = if length(user_ids) > 0, do: Snapid.Auth.get_users_by_ids(user_ids)["data"], else: []
-
-    comments
-    |> Enum.map(fn comment ->
-      user =
-        Enum.find(users, fn user ->
-          user["id"] == comment.user_id
-        end)
-
-      comment |> Map.put(:user, user)
-    end)
+    comment_base_filter(snap_id)
+    |> order_by([c], desc: c.inserted_at)
+    |> limit([c], ^page_size)
+    |> preload(user: [])
+    |> maybe_filter_by_id(last_id)
+    |> maybe_filter_by(:parent_comment_id, parent_comment_id, literal_nil: true)
+    |> Repo.all()
+    |> Enum.reverse()
   end
 
   def total_comments_count(snap_id, parent_comment_id \\ nil) do
@@ -250,11 +209,8 @@ defmodule Snapid.Snaps do
     |> Repo.insert()
     |> case do
       {:ok, comment} ->
-        user = Snapid.Auth.get_user_by_id(comment.user_id)["data"]
-        comment = Map.put(comment, :user, user)
-
+        comment = comment |> Repo.preload(:user)
         publish_comment_created({:ok, comment})
-
         {:ok, comment}
 
       {:error, error} ->
